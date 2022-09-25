@@ -1,4 +1,4 @@
-# Team Name
+# ECAN PROJECT
 
 Project description (~1 paragraph)
 
