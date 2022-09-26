@@ -6,7 +6,7 @@ Project description (~1 paragraph)
 
 * [Alexander Hobbs](https://github.com/hobbsAlex/CIS350-HW2-HOBBS)
 * [Nathaniel Tabacchi](https://github.com/DireTabacchi/CIS350-HW2-Tabacchi)
-* Member 3 (Role 5, Role 6)
+* [Cameron Schneider](https://github.com/CJSchneider320/CIS350-HW2-Schneider)
 
 ## Prerequisites
 
