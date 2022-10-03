@@ -24,7 +24,7 @@ Combat will be reserved to the final part of puzzle-centric levels,
 in the form of a level boss or set of particularly difficult enemies,
 and some levels will be combat-only. Such combat-only levels may be
 a single room, multiple rooms, or a maze. Players may choose to
-escape dire situations, but hav eto replay the level, and the
+escape dire situations, but have to replay the level, and the
 player's demise will bring about a similar effect.
 
 The idea is that there will be enemies on the puzzle maps which the
