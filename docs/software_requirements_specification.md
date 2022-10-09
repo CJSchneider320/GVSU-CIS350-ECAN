@@ -7,7 +7,6 @@
 1. General Gameplay Requirements
    1. Our game shall combine common puzzle-game tropes with a turn-based RPG style.
    2. The user shall be able to move the player using the WASD keys on the keyboard
-   3. Our game shall load new rooms upon entrance.
 2. Player Requirements
    1. Player statistics shall be recorded on player-character death.
    2. Items picked up by the player shall be added to the first acailable slot in their inventory.
@@ -29,6 +28,7 @@
 2. Player Requirements
    1. The player character shall be represented by a unique, unmistakable symbol.
    2. The player shall always be visible on the screen.
+   3. The main screen will be updated upon entering a new room, but the player will "remember" how the prior rooms were left.
 3. Graphics/UI Requirements
    1. Our game shall update at a rate of 30 frames per second.
    2. Our game shall have a easily traversed main menu and corresponding sub-menus to access game play, statistics, and other similar pages.
