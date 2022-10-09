@@ -1,6 +1,6 @@
 # Overview
 
-<Describe the purpose of this document in 1 paragraph of less … hint: it is your SRS>
+This document is designed to outline the goals of which we are going to meet by the time that we deliver the game. The document is being split into a few sections, which are the same in the functional and non-functional sections. Then, requirements will be listed for the respective section under the section, which will describe how the object that the section describes will function in the release.
 
 # Functional Requirements
 
