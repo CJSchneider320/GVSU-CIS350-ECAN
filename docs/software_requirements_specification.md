@@ -9,11 +9,12 @@ This document is designed to outline the goals of which we are going to meet by 
    2. The user shall be able to move the player using the WASD keys on the keyboard
 2. Player Requirements
    1. Player statistics shall be recorded on player-character death.
-   2. Items picked up by the player shall be added to the first acailable slot in their inventory.
+   2. Items picked up by the player shall be added to the inventory.
    3. Our game shall have a myriad of weapons and items to let the player create
    4. The player's inventory shall be limited. a unique identity in game.
    5. Enemy NPCs shall move towards the player on sight.
    6. Our game shall detect collisions between the player and other non-passable objects.
+   7. User shall be able to enter their inventory.
 3. Graphics/UI Requirements
    1. 
 4. Puzzle Requirements
