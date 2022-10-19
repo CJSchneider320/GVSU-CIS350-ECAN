@@ -147,3 +147,23 @@ Time to complete: N/A
 All group members are responsible.
 
 ---
+
+### Create a Level Datatype
+
+Create a level datatype to easily render levels in ncurses.
+
+Time to complete: Estimated 3 days.
+
+Responsibility undeclared.
+
+---
+
+### Create a Function/Functions to Render Level Datatype to ncurses
+
+Create a function or set of functions to read from a level datatype and easily render that level to ncurses.
+
+Time to complete: Estimated 3 days.
+
+Responsibility undeclared.
+
+---
