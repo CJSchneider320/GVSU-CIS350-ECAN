@@ -1,5 +1,5 @@
-#ifndef LEVEL_H_
-#define LEVEL_H_
+#ifndef LEVEL_H
+#define LEVEL_H
 
 #include <string>
 
@@ -19,4 +19,3 @@ public:
 };
 
 #endif
-
