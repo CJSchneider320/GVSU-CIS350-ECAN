@@ -26,19 +26,25 @@
 #define DOWN_ARROW		"\u2193"
 
 // Doors
-#define LOCKED_DOOR		"\u256A"
-#define DOOR			"\u256B"
-#define LEFT_OPEN_DOOR	"\u258C"
-#define TOP_OPEN_DOOR	"\u2580"
+#define LOCKED_DOOR			"\u256A"
+#define DOOR				"\u256B"
+#define LEFT_OPEN_DOOR		"\u258C"
+#define RIGHT_OPEN_DOOR		"\u2590"
+#define TOP_OPEN_DOOR		"\u2580"
+#define BOTTOM_OPEN_DOOR	"\u2584"
 
 // Entities
-#define PLAYER			"\u263A"
-#define ROBOT			"\u263B"
+#define PLAYER	"\u263A"
+#define ROBOT	"\u263B"
 
 // Miscellaneous
-#define SPIKE					"\u2206"
-#define CHEST					"\u0434"
+#define SPIKE	"\u2206"
+#define CHEST	"\u0434"
+#define EMPTY	" "
+
+// Puzzle Elements
 #define PRESSURE_PLATE			"\u25A1"
 #define HEAVY_PRESSURE_PLATE	"\u25A0"
 #define BUTTON					"\u25CB"
-
+#define LEVER_ON 				"/"
+#define LEVER_OFF				"\\"

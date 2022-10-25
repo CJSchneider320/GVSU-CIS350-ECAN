@@ -1,5 +1,3 @@
-#include <ncurses.h>
-#include <string>
 #include <iostream>
 #include <locale>
 #include <cassert>
@@ -27,7 +25,7 @@ int main(int argc, char** argv)
 	map += "#...#...#..#...#...#";
 	map += "####################";
 	
-	// map is: height = 14, width = 20
+	// map is: height = 15, width = 20
 
 	Level test_level(15, 20, map);
 
