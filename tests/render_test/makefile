@@ -2,7 +2,7 @@ root := $(shell git rev-parse --show-toplevel)
 all: render_test
 
 render_test: level.o level_renderer.o render_test.o
-	g++ -lncursesw render_test.o level.o level_renderer.o -o render_test
+	g++ render_test.o level.o level_renderer.o -o render_test -lncursesw 
 
 level.o:
 	g++ -c $(root)/src/level.cpp -o level.o

@@ -21,6 +21,9 @@ using namespace std;
 	WINDOW* room = newwin(level.getHeight(), level.getWidth(),
 		start_y, start_x);
 	struct WDBRT wd;
+	
+	init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(2, COLOR_BLUE, COLOR_BLACK);
 
 	srand(time(NULL));
 	for (int y = 0; y < level.getHeight(); y++) {
@@ -33,10 +36,10 @@ using namespace std;
 				wd = wallsDoorsCheck(level, y, x);
 				// Determine what wall to render
 				// Straight walls
-				if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.right_door)
-					|| (!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
-					|| (!wd.top_wall && !wd.bottom_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
-					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door))
+				if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.top_door && !wd.bottom_door && !wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.top_door && !wd.bottom_door && ! wd.left_door && !wd.right_door))
 					wprintw(room, HORIZONTAL_WALL);
 				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.bottom_door && !wd.left_door && !wd.right_door)
 					|| (!wd.top_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
@@ -51,21 +54,55 @@ using namespace std;
 					wprintw(room, TOP_LEFT_WALL);
 				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && wd.left_door && !wd.right_door)
 					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && !wd.left_door && !wd.right_door)
-					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_wall && !wd.right_wall)
-					|| (!wd.top_wall && wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_wall && !wd.right_wall))
+					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, TOP_RIGHT_WALL);
-				else if (!wd.left_wall && wd.right_wall && wd.top_wall && !wd.bottom_wall)
+				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, BOTTOM_LEFT_WALL);
-				else if (wd.left_wall && !wd.right_wall && wd.top_wall && !wd.bottom_wall)
+				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, BOTTOM_RIGHT_WALL);
 				// Intersecting walls
-				else if (!wd.left_wall && wd.right_wall && wd.top_wall && wd.bottom_wall)
+				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && wd.top_door && wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && !wd.top_door && wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (wd.top_wall && wd.bottom_wall && !wd.left_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, LEFT_MIDDLE_WALL);
-				else if (wd.left_wall && !wd.right_wall && wd.top_wall && wd.bottom_wall)
+				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && wd.top_door && wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (wd.top_wall && wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, RIGHT_MIDDLE_WALL);
-				else if (wd.left_wall && wd.right_wall && !wd.top_wall && wd.bottom_wall)
+				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && wd.left_door && wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && !wd.top_door && wd.bottom_door && wd. left_door && !wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.top_door && wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && !wd.left_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (!wd.top_wall && wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, TOP_MIDDLE_WALL);
-				else if (wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.top_wall)
+				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && wd.left_door && wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && wd.right_wall && wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && wd.left_door && !wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && wd.right_door)
+					|| (wd.top_wall && !wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.top_door && !wd.bottom_door && !wd.left_door && !wd.right_door))
 					wprintw(room, BOTTOM_MIDDLE_WALL);
 				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door & wd.bottom_door && wd.left_door && wd.right_door)
 					|| (!wd.top_wall & !wd.bottom_wall && !wd.left_wall && wd.right_wall && wd.top_door && wd.bottom_door && wd.left_door && !wd.right_door)
@@ -97,16 +134,68 @@ using namespace std;
 			}
 			else if (level.getMap()[map_index] == 'd') {
 				wd = wallsDoorsCheck(level, y, x);
-				if (wd.top_wall && wd.bottom_wall)
+				if ((wd.top_wall && !wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && wd.bottom_door)
+					|| (wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && !wd.top_door && !wd.bottom_door))
 					wprintw(room, TOP_OPEN_DOOR);
+				else if (!wd.top_wall && wd.bottom_wall && !wd.left_wall && !wd.right_wall && wd.top_door && !wd.bottom_door)
+					wprintw(room, BOTTOM_OPEN_DOOR);
 				else if ((!wd.top_wall && !wd.bottom_wall && wd.left_wall && !wd.right_wall && !wd.left_door && wd.right_door)
 					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.left_door && !wd.right_door))
 					wprintw(room, LEFT_OPEN_DOOR);
 				else if ((!wd.top_wall && !wd.bottom_wall && !wd.left_wall && wd.right_wall && wd.left_door && !wd.right_door)
-				|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.left_door && !wd.right_door))
+					|| (!wd.top_wall && !wd.bottom_wall && wd.left_wall && wd.right_wall && !wd.left_door && !wd.right_door))
 					wprintw(room, RIGHT_OPEN_DOOR);
 			}
 			// ---------------- END DOORS ----------------
+			else if (level.getMap()[map_index] == '!') {
+				wprintw(room, SPIKE);
+			}
+			else if (level.getMap()[map_index] == 'l') {
+				wprintw(room, LEVER_OFF);
+			}
+			else if (level.getMap()[map_index] == 'L') {
+				wprintw(room, LEVER_ON);
+			}
+			else if (level.getMap()[map_index] == 'p') {
+				wprintw(room, PRESSURE_PLATE);
+			}
+			else if (level.getMap()[map_index] == 'P') {
+				wprintw(room, HEAVY_PRESSURE_PLATE);
+			}
+			else if (level.getMap()[map_index] == 'B') {
+				wprintw(room, BUTTON);
+			}
+			else if (level.getMap()[map_index] == 's') {
+				wprintw(room, STAIRS_ENTER);
+			}
+			else if (level.getMap()[map_index] == 'S') {
+				wprintw(room, STAIRS_EXIT);
+			}
+			else if (level.getMap()[map_index] == '^') {
+				wprintw(room, UP_ARROW);
+			}
+			else if (level.getMap()[map_index] == '>') {
+				wprintw(room, RIGHT_ARROW);
+			}
+			else if (level.getMap()[map_index] == 'v') {
+				wprintw(room, DOWN_ARROW);
+			}
+			else if (level.getMap()[map_index] == '<') {
+				wprintw(room, LEFT_ARROW);
+			}
+			else if (level.getMap()[map_index] == 'c') {
+				wprintw(room, CHEST);
+			}
+			else if (level.getMap()[map_index] == 'R') {
+				wattron(room, COLOR_PAIR(2));
+				wprintw(room, ROBOT);
+				wattroff(room, COLOR_PAIR(2));
+			}
+			else if (level.getMap()[map_index] == 'r') {
+				wattron(room, COLOR_PAIR(1));
+				wprintw(room, ROBOT);
+				wattroff(room, COLOR_PAIR(1));
+			}
 		}
 	}
 

@@ -26,16 +26,20 @@ int main(int argc, char** argv)
 	map += "# ## ## D  d  ## ##           #  #     #    D   d  #";
 	map += "# D  d  ## ##  D  d     #     D  d    ##d#  #   #  #";
 	map += "# #  #  #  #   #  #    ##d#  ## ##     #           #";
-	map += "#                             #  #             #####";
-	map += "# #dd# #DD# #################      #############    ";
-	map += "#           #               ########                ";
+	map += "#                             #  #  #    ###########";
+	map += "# #   #     #   # ###########         ####          ";
+	map += "# #D# #d# #D# #d# #         ###########             ";
+	map += "# #   #     #   # #                                 ";
+	map += "#                 #                                 ";
+	map += "# #dd# #DD# #######                                 ";
+	map += "#           #                                       ";
 	map += "#############                                       ";
 	
-	// map is: height = 21, width = 52
+	// map is: height = 25, width = 52
 
-	Level test_level(21, 52, map);
+	Level test_level(25, 52, map);
 
-	assert(test_level.getHeight() == 21);
+	assert(test_level.getHeight() == 25);
 	assert(test_level.getWidth() == 52);
 	assert(test_level.getMap() == map);
 	
