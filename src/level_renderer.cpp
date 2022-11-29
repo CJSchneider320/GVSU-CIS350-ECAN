@@ -12,8 +12,7 @@ using namespace std;
  * 80 characters by 30 lines.
  * returns: an ncurses window object.
  */
- WINDOW* LevelRenderer::renderLevel(Level level)
- {
+WINDOW* LevelRenderer::renderLevel(Level level) {
  	int start_y = 15 - (level.getHeight() / 2);
 	int start_x = 40 - (level.getWidth() / 2);
 	int map_index;
