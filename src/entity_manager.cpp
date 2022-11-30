@@ -22,7 +22,7 @@ Entity EntityManager::create_entity() {
 void EntityManager::destroy_entity(Entity entity) {
     assert(entity < MAX_ENTITIES && "Entity is out of range of maximum entities.");
 
-    signatures[entity].reset();
+    signatures.erase(entity);
     available_entity_ids.push(entity);
     --living_entities;
 }
