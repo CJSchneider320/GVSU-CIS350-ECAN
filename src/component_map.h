@@ -1,8 +1,13 @@
 #include "EcsConstants.h"
 #include <unordered_map>
 
+class IComponentMap {
+    virtual ~IComponentMap() = default;
+    virtual void entity_destroyed(Entity) = 0;
+};
+
 template<typename T>
-class ComponentMap {
+class ComponentMap : public IComponentMap {
     std::unordered_map<Entity, T> component_map;
 
 public:
