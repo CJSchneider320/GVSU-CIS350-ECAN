@@ -10,7 +10,7 @@ This document is designed to outline the goals of which we are going to meet by 
    3. The player shall be able to move between levels
    4. The layout of the levels shall be predefined
    5. Additional challenge modes shall be available to the user after beating the game, including a timed mode, a no damage run mode, and a mode where the order of levels is random
-   6. the levels shall take place on a 2d grid of tiles, each object takes up 1 tile
+   6. The levels shall take place on a 2d grid of tiles, each object takes up 1 tile
    7. Objects that the game shall implement include: walls, doors, buttons, pressure plates, levers, spikes, stairs, conveyor belts, robots, breakable walls, and simple enemies
 2. Player Requirements
    1. Player statistics shall be recorded on player-character death.
@@ -19,9 +19,9 @@ This document is designed to outline the goals of which we are going to meet by 
    4. Enemy NPCs shall move towards the player on sight.
    5. Our game shall detect collisions between the player and other non-passable objects.
    6. The player shall lose health upon contact with damaging obstacles or entities
-   7. User shall be able to use items from their inventory 
+   7. The User shall be able to use items from their inventory 
 3. Puzzle Requirements
-	1. There shall be Objects that are interactable by the player
+	1. There shall be Objects that the player can interact with
 	2. Switch objects, like levers or buttons, shall alter the state of other objects
 	3. Stairs shall allow the player to move between levels
 	4. Doors shall be closed or open to player and entity movement, and shall be closed and opened by switches
@@ -36,7 +36,7 @@ This document is designed to outline the goals of which we are going to meet by 
 	3. Our game shall take user input and update the display accordingly.
 	4. The layout of the levels shall be hard coded and the user shall not be able to alter them
 	5. Chest objects shall have their own GUI
-	6. walls and doors shall be rendered based on the surrounding walls / doors, in order to appear to connect with each other
+	6. Walls and doors shall be rendered based on the surrounding walls / doors, in order to appear to connect with each other
 2. Player Requirements
 	1. The player character shall be represented by a unique, unmistakable symbol.
 	2. The player shall always be visible on the screen.

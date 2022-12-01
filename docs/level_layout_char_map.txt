@@ -22,6 +22,7 @@ stairs up (exit) ------- S
 spike ------------------ !
 pressure plate --------- p
 heavy pressure plate --- P
-Lever (off) ------------ l
-Lever (on) ------------- L
+Lever (off default) ---- l
+Lever (on default) ----- L
 Button ----------------- B
+enemy ------------------ E
