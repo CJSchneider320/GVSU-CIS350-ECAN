@@ -2,6 +2,7 @@
 #include <unordered_map>
 
 class IComponentMap {
+public:
     virtual ~IComponentMap() = default;
     virtual void entity_destroyed(Entity) = 0;
 };
