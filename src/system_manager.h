@@ -12,6 +12,8 @@ public:
     void register_system();
     template <typename T>
     void set_signature(Signature);
+    template <typename T>
+    T& get_system();
     void entity_signature_changed(Entity, Signature);
     void entity_destroyed(Entity);
     void run_systems();

@@ -19,6 +19,15 @@ void SystemManager::set_signature(Signature system_signature) {
     system_signatures_map[type_name] = system_signature;
 }
 
+template <typename T>
+T& SystemManager::get_system() {
+    const char* type_name = typeid(T).name();
+
+    assert(systems_map.find(type_name) != systems_map.end() && "Cannot get an unregistered system.");
+
+    return systems_map[type_name];
+}
+
 void SystemManager::entity_signature_changed(Entity entity, Signature entity_signature) {
     for (auto const& pair : systems_map) {
         const char* type_name = pair.first;
