@@ -24,8 +24,9 @@ struct Farewell {
 class Move : public System {
 public:
     void run(World& world) override {
+        //std::cout << "Start Move" << std::endl;
         for (Entity entity : entities) {
-            std::cout << "My entity: " << entity << std::endl;
+            //std::cout << "My entity: " << entity << std::endl;
             auto& position = world.get_component<Position>(entity);
             if (position.x == 80) {
                 position.y += 1;
@@ -33,16 +34,18 @@ public:
             } else {
                 position.x += 1;
             }
-            std::cout << "x, y: " << position.x << ", " << position.y << std::endl;
+            //std::cout << "x, y: " << position.x << ", " << position.y << std::endl;
         }
+        //std::cout << "Done in Move" << std::endl;
     }
 };
 
 class SayGreeting : public System {
 public:
     void run(World& world) {
+        //std::cout << "Start SayGreeting" << std::endl;
         for (Entity entity : entities) {
-            std::cout << "My entity: " << entity << std::endl;
+            //std::cout << "My entity: " << entity << std::endl;
             auto position = world.get_component<Position>(entity);
             auto greeting = world.get_component<Greeting>(entity);
 
@@ -52,16 +55,19 @@ public:
             }
             if (position.y == 50) {
                 world.remove_component<Greeting>(entity);
+                std::cout << "Removed greeting from Entity " << entity << std::endl;
             }
         }
+        //std::cout << "Done in SayGreeting" << std::endl;
     }
 };
 
 class SayFarewell : public System {
 public:
     void run(World& world) {
+        //std::cout << "Start SayFarewell" << std::endl;
         for (Entity entity : entities) {
-            std::cout << "My entity: " << entity << std::endl;
+            //std::cout << "My entity: " << entity << std::endl;
             auto position = world.get_component<Position>(entity);
             auto farewell = world.get_component<Farewell>(entity);
 
@@ -72,6 +78,7 @@ public:
                 world.remove_component<Farewell>(entity);
             }
         }
+        //std::cout << "Done in SayFarewell" << std::endl;
     }
 };
 
@@ -104,13 +111,13 @@ int main() {
     world.set_system_signature<SayFarewell>();
 
     // Create entities and add their components
-    printf("Creating Entities...");
-    std::cout << "Entity 1..." << std::endl;
+    std::cout <<"Creating Entities..." << std::endl;
+    std::cout << "Entity 0..." << std::endl;
     Entity e1 = world.create_entity();
     world.add_component(e1, Position {10, 10});
     world.add_component(e1, Greeting {"Hello there!"});
     
-    std::cout << "Entity 2..." << std::endl;
+    std::cout << "Entity 1..." << std::endl;
     Entity e2 = world.create_entity();
     world.add_component(e2, Position {0, 0});
     world.add_component(e2, Farewell { "Take it easy!" });
@@ -121,4 +128,5 @@ int main() {
         world.run_systems(world);
         i++;
     }
+    std::cout << "Finished" << std::endl;
 }

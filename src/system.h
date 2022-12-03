@@ -14,6 +14,7 @@ class World;
 
 class System {
 public:
+    bool running = false;
     std::set<Entity> entities;
     std::set<ComponentType> components;
     // Must be implemented by a System. This will be run whenever
