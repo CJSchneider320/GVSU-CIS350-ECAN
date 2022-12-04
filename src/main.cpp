@@ -158,19 +158,29 @@ int main() {
     while (!quit) {
         level.draw_level(room);
 
+
         std::string player_glyph = ecs.get_component<Renderable>(player).glyph;
         int player_color = ecs.get_component<Renderable>(player).symbol_color;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
 
-        wmove(room, player_y, player_x);
-        wattron(room, COLOR_PAIR(player_color));
-        wprintw(room, "%s", player_glyph.c_str());
-        wattroff(room, COLOR_PAIR(player_color));
+        while(!quit) {
+            wmove(room, player_y, player_x);
+            wattron(room, COLOR_PAIR(player_color));
+            wprintw(room, "%s", player_glyph.c_str());
+            wattroff(room, COLOR_PAIR(player_color));
 
-        refresh();
-        wrefresh(room);
+            refresh();
+            wrefresh(room);
 
+
+            player_input = getch();
+            if (player_input == 'q') {
+                quit = true;
+            } else {
+                continue;
+            }
+        }
     }
 
     endwin();
