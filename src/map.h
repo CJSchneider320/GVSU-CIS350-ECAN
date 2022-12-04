@@ -2,6 +2,8 @@
 #include <vector>
 #include <ncurses.h>
 
+#include "colordata.h"
+
 enum TileType {
     Floor,
     Wall,
@@ -11,6 +13,7 @@ class Map {
 
 public:
     std::vector<TileType> m_tiles;
+    std::vector<bool> m_blocked_tiles;
     int m_height = 15;
     int m_width = 20;
 
@@ -18,19 +21,27 @@ public:
         int x = 0;
         int y = 0;
         std::string glyph;
+        int color;
         for (TileType tile : m_tiles) {
             wmove(room, y, x);
             switch (tile) {
                 case TileType::Floor:
-                   wprintw(room, "."); 
-                   break;
+                    glyph = ".";
+                    color = FWHITEBBLACK;
+                    break;
                 case TileType::Wall:
-                   wprintw(room, "#");
-                   break;
+                    glyph = "#";
+                    color = FWHITEBBLACK;
+                    break;
                 default:
-                   wprintw(room, " ");
+                    glyph = " ";
+                    color = FWHITEBBLACK;
                    break;
             }
+            wattron(room, COLOR_PAIR(color));
+            wprintw(room, "%s", glyph.c_str());
+            wattroff(room, COLOR_PAIR(color));
+
             x += 1;
             if (x == m_width) {
                 x = 0;
@@ -43,8 +54,10 @@ public:
         for (char tile : a_level) {
             if (tile == '#') {
                 m_tiles.push_back(TileType::Wall);
+                m_blocked_tiles.push_back(true);
             } else if (tile == '.') {
                 m_tiles.push_back(TileType::Floor);
+                m_blocked_tiles.push_back(false);
             }
         }
     }

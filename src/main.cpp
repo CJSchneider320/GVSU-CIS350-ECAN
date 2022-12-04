@@ -3,6 +3,7 @@
 #include <string>
 
 #include "map.h"
+#include "world.h"
 
 
 int main() {
@@ -18,6 +19,9 @@ int main() {
 
     start_color();
 
+
+    init_pair(FWHITEBBLACK, COLOR_WHITE, COLOR_BLACK);
+
     std::string baseline_level;
     baseline_level += "####################";
     baseline_level += "#..................#";
@@ -31,6 +35,7 @@ int main() {
     baseline_level += "####################";
 
     Map level;
+    World ecs;
 
     level.create_preset_level(baseline_level);
 
