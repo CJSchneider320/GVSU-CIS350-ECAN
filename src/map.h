@@ -3,10 +3,12 @@
 #include <ncurses.h>
 
 #include "colordata.h"
+#include "components.h"
 
 enum TileType {
     Floor,
     Wall,
+    Unknown,
 };
 
 class Map {
@@ -14,6 +16,7 @@ class Map {
 public:
     std::vector<TileType> m_tiles;
     std::vector<bool> m_blocked_tiles;
+    int m_player_start = 0;
     int m_height = 15;
     int m_width = 20;
 
@@ -34,7 +37,7 @@ public:
                     color = FWHITEBBLACK;
                     break;
                 default:
-                    glyph = " ";
+                    glyph = "?";
                     color = FWHITEBBLACK;
                    break;
             }
@@ -52,13 +55,34 @@ public:
 
     void create_preset_level(std::string a_level) {
         for (char tile : a_level) {
-            if (tile == '#') {
-                m_tiles.push_back(TileType::Wall);
-                m_blocked_tiles.push_back(true);
-            } else if (tile == '.') {
-                m_tiles.push_back(TileType::Floor);
-                m_blocked_tiles.push_back(false);
+            switch (tile) {
+                case '#':
+                    m_tiles.push_back(TileType::Wall);
+                    m_blocked_tiles.push_back(true);
+                    break;
+                case '.':
+                    m_tiles.push_back(TileType::Floor);
+                    m_blocked_tiles.push_back(false);
+                    break;
+                case '@':
+                    m_tiles.push_back(TileType::Floor);
+                    m_blocked_tiles.push_back(false);
+                    m_player_start = a_level.find('@');
+                    break;
+                default:
+                    m_tiles.push_back(TileType::Unknown);
+                    m_blocked_tiles.push_back(true);
+                    break;
             }
         }
+    }
+
+    Position index_to_positon(int index) {
+        Position pos {
+            m_player_start % m_width,
+            m_player_start / m_width
+        };
+
+        return pos;
     }
 };
