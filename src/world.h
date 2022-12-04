@@ -71,6 +71,11 @@ public:
     ComponentType get_component_type() {
         return component_manager->get_component_type<T>();
     }
+
+    template <typename T>
+    std::shared_ptr<ComponentMap<T>> get_component_map() {
+        return component_manager->get_component_map<T>();
+    }
     
     // System related methods
     

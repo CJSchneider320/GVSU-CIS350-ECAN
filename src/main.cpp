@@ -171,12 +171,6 @@ int main() {
         refresh();
         wrefresh(room);
 
-        player_input = getch();
-        if (player_input == 'q') {
-            quit = true;
-        } else {
-            continue;
-        }
     }
 
     endwin();
