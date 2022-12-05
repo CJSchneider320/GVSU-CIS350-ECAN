@@ -9,9 +9,9 @@ public:
 
 template<typename T>
 class ComponentMap : public IComponentMap {
+public:
     std::unordered_map<Entity, T> component_map;
 
-public:
 ComponentMap() {
     component_map = std::unordered_map<Entity, T>();
 }

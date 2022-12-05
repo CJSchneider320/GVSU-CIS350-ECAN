@@ -24,6 +24,7 @@ int main() {
     }
     
     //noecho();
+    curs_set(0); // hide the cursor
     keypad(stdscr, true);
     start_color();
     // ---------------------------------------------------------------
@@ -31,6 +32,7 @@ int main() {
     // ---------------------------------------------------------------
     // Initialize colors.
     init_pair(FWHITEBBLACK, COLOR_WHITE, COLOR_BLACK);
+    init_pair(FYELLOWBBLACK, COLOR_YELLOW, COLOR_BLACK);
 
     // ---------------------------------------------------------------
     // Define levels
@@ -58,7 +60,7 @@ int main() {
     level_1 += "#...#.....#........#"; // 4
     level_1 += "#####.....#######d##"; // 5
     level_1 += "#...#.....#........#"; // 6
-    level_1 += "#...D..l..D........#"; // 7
+    level_1 += "#...d..l..D........#"; // 7
     level_1 += "#...#.....#.......l#"; // 8
     level_1 += "#...#.....#!!!!!!!!#"; // 9
     level_1 += "#...#.....#........#"; // 10
@@ -148,6 +150,7 @@ int main() {
     ecs.register_component<Position>();
     ecs.register_component<Renderable>();
     ecs.register_component<CPlayer>();
+    ecs.register_component<Door>();
 
     // ---------------------------------------------------------------
 
@@ -156,7 +159,7 @@ int main() {
     bool quit = false;
     RunState runstate = RunState::PreRun;
 
-    level.create_preset_level(level_1);
+    level.create_preset_level(level_1, ecs);
     // Create Player entity
     Entity player = ecs.create_entity();
     ecs.add_component(player, level.index_to_positon(level.m_player_start));
@@ -165,11 +168,24 @@ int main() {
 
 
     while (!quit) {
-        level.draw_level(room);
+        level.draw_level(room, ecs);
         std::string player_glyph = ecs.get_component<Renderable>(player).glyph;
         int player_color = ecs.get_component<Renderable>(player).symbol_color;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
+        for (auto& renderable : ecs.get_component_map<Renderable>()->component_map) {
+            Entity entity = renderable.first;
+            if (entity != player) {
+                std::string glyph = renderable.second.glyph;
+                int color = renderable.second.symbol_color;
+                auto& position = ecs.get_component<Position>(entity);
+
+                wmove(room, position.y, position.x);
+                wattron(room, COLOR_PAIR(color));
+                wprintw(room, "%s", glyph.c_str());
+                wattroff(room, COLOR_PAIR(color));
+            }
+        }
 
         wmove(room, player_y, player_x);
         wattron(room, COLOR_PAIR(player_color));

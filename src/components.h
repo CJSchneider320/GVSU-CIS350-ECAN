@@ -15,4 +15,15 @@ struct Renderable {
 
 struct CPlayer {};
 
+struct Connection {
+    int source;
+    int target;
+};
+
+struct Door {
+    bool d_status;
+    // true = open
+    // false = closed
+};
+
 #endif
