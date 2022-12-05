@@ -1,6 +1,9 @@
 #ifndef COMPONENTS_H_
 #define COMPONENTS_H_
+
 #include <string>
+#include <vector>
+#include "EcsConstants.h"
 #include "colordata.h"
 
 struct Position {
@@ -16,8 +19,7 @@ struct Renderable {
 struct CPlayer {};
 
 struct Connection {
-    int source;
-    int target;
+    std::vector<int> targets;
 };
 
 struct Door {
@@ -25,5 +27,17 @@ struct Door {
     // true = open
     // false = closed
 };
+
+struct Lever {
+    bool active;
+};
+
+struct Interactable {};
+
+struct WantsToInteract {
+    Entity target;
+};
+
+struct WantsToToggleConnections {};
 
 #endif

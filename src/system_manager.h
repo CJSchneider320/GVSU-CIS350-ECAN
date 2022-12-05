@@ -6,14 +6,17 @@
 #include <cassert>
 #include <string>
 #include <iostream>
+#include <queue>
 
 #include "system.h"
+#include "entity_manager.h"
 
 class World;
 
 class SystemManager {
     std::unordered_map<std::string, Signature> system_signatures_map;
     std::unordered_map<std::string, std::shared_ptr<System>> systems_map;
+    std::queue<Entity> changed_entities;
 
 public:
     template <typename T>
@@ -54,21 +57,21 @@ public:
             auto system = pair.second;
             const Signature system_signature = system_signatures_map[type_name];
 
-            std::cout << "System " << type_name << " entities:" << std::endl;
-            for (auto const& ent : system->entities) {
-                std::cout << "Entity " << ent << std::endl;
-            }
+            //std::cout << "System " << type_name << " entities:" << std::endl;
+            //for (auto const& ent : system->entities) {
+            //    std::cout << "Entity " << ent << std::endl;
+            //}
 
-            std::cout << "System: " << type_name << std::endl;
-            std::cout << "System sig: " << system_signature << std::endl << "Entity sig: " << entity_signature << std::endl;
+            //std::cout << "System: " << type_name << std::endl;
+            //std::cout << "System sig: " << system_signature << std::endl << "Entity sig: " << entity_signature << std::endl;
             
             if ((entity_signature & system_signature) == system_signature
                     && system->entities.find(entity) == system->entities.end()) {
-                std::cout << "System: " << type_name << " adding entity " << entity << std::endl;
+                //std::cout << "System: " << type_name << " adding entity " << entity << std::endl;
                 system->entities.insert(entity);
             }
             else if ((entity_signature & system_signature) != system_signature) {
-                std::cout << "System: " << type_name << " removing entity " << entity << std::endl;
+                //std::cout << "System: " << type_name << " removing entity " << entity << std::endl;
                 system->entities.erase(entity);
             }
         }
@@ -81,16 +84,12 @@ public:
         }
     }
     
-    void run_systems(World& world) {
+    void run_systems(World& world, std::unique_ptr<EntityManager> &entity_manager) {
         for (auto const& pair : systems_map) {
             auto const& system = pair.second;
             //std::cout << "Running system: " << pair.first << std::endl;
             system->run(world);
         }
-    }
-
-    void maintain_systems() {
-
     }
 };
 

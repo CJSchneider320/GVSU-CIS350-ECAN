@@ -42,7 +42,7 @@ public:
 
 class SayGreeting : public System {
 public:
-    void run(World& world) {
+    void run(World& world) override {
         //std::cout << "Start SayGreeting" << std::endl;
         for (Entity entity : entities) {
             //std::cout << "My entity: " << entity << std::endl;
@@ -64,7 +64,7 @@ public:
 
 class SayFarewell : public System {
 public:
-    void run(World& world) {
+    void run(World& world) override {
         //std::cout << "Start SayFarewell" << std::endl;
         for (Entity entity : entities) {
             //std::cout << "My entity: " << entity << std::endl;

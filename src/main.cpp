@@ -1,13 +1,18 @@
-
 #include <ncurses.h>
 #include <locale>
 #include <string>
+#include <unordered_map>
 
 #include "components.h"
 #include "map.h"
 #include "world.h"
 #include "player.h"
 #include "run_state.h"
+#include "interaction_system.h"
+#include "toggle_connections_system.h"
+
+// Make the Map global
+Map level;
 
 int main() {
     // ---------------------------------------------------------------
@@ -33,8 +38,11 @@ int main() {
     // Initialize colors.
     init_pair(FWHITEBBLACK, COLOR_WHITE, COLOR_BLACK);
     init_pair(FYELLOWBBLACK, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(FGREENBBLACK, COLOR_GREEN, COLOR_BLACK);
 
     // ---------------------------------------------------------------
+
+
     // Define levels
     std::string baseline_level;
     baseline_level += "####################";
@@ -70,6 +78,16 @@ int main() {
     level_1 += "#...#.....#........#"; // 14
     level_1 += "####################"; // 15
 
+    std::unordered_map<int, std::vector<int>> connections_level_1;
+    connections_level_1[level.position_to_index(7, 2)] = std::vector<int>({
+            level.position_to_index(4, 2),
+            level.position_to_index(17, 4)});
+    connections_level_1[level.position_to_index(7, 6)] = std::vector<int>({
+            level.position_to_index(4, 6),
+            level.position_to_index(10, 6)});
+    connections_level_1[level.position_to_index(18, 7)] = std::vector<int>({
+            level.position_to_index(7, 11)});
+
     std::string level_2;
     level_2 +=  "####################"; // 1
     level_2 +=  "#...#.#....#@..#...#"; // 2
@@ -86,6 +104,8 @@ int main() {
     level_2 +=  "#.###.#.########...#"; // 13
     level_2 +=  "#.....#..........#l#"; // 14
     level_2 +=  "####################"; // 15
+
+    std::unordered_map<int, std::vector<int>> connections_level_2;
 
     std::string level_3;
     level_3 += "####################"; // 1
@@ -104,6 +124,8 @@ int main() {
     level_3 += "#...#...#...#......#"; // 14
     level_3 += "####################"; // 15
 
+    std::unordered_map<int, std::vector<int>> connections_level_3;
+
     std::string level_4;
     level_4 += "####################"; // 1
     level_4 += "#.s.#.l....D.c#..l!#"; // 2
@@ -120,6 +142,8 @@ int main() {
     level_4 += "#..........##l#l#l##"; // 13
     level_4 += "#..S.......#########"; // 14
     level_4 += "####################"; // 15
+
+    std::unordered_map<int, std::vector<int>> connections_level_4;
 
     std::string level_5;
     level_5 += "####################"; // 1
@@ -138,19 +162,33 @@ int main() {
     level_5 += "#l.......d.......Sp#"; // 14
     level_5 += "####################"; // 15
 
+    std::unordered_map<int, std::vector<int>> connections_level_5;
+
     // ---------------------------------------------------------------
 
-    Map level;
 
     // ---------------------------------------------------------------
     // Initialize the ECS.
 
     World ecs;
     ecs.init();
+
+    // Register Components
     ecs.register_component<Position>();
     ecs.register_component<Renderable>();
     ecs.register_component<CPlayer>();
     ecs.register_component<Door>();
+    ecs.register_component<Connection>();
+    ecs.register_component<Lever>();
+    ecs.register_component<Interactable>();
+    ecs.register_component<WantsToInteract>();
+    ecs.register_component<WantsToToggleConnections>();
+
+    // Register Systems
+    auto interaction = ecs.register_system<Interaction>();
+    interaction->components.insert(ecs.get_component_type<Position>());
+    interaction->components.insert(ecs.get_component_type<WantsToInteract>());
+    ecs.set_system_signature<Interaction>();
 
     // ---------------------------------------------------------------
 
@@ -159,13 +197,11 @@ int main() {
     bool quit = false;
     RunState runstate = RunState::PreRun;
 
-    level.create_preset_level(level_1, ecs);
+    level.create_preset_level(level_1, connections_level_1, ecs);
     // Create Player entity
     Entity player = ecs.create_entity();
-    ecs.add_component(player, level.index_to_positon(level.m_player_start));
+    ecs.add_component(player, level.index_to_position(level.m_player_start));
     ecs.add_component(player, Renderable { "@", FWHITEBBLACK });
-
-
 
     while (!quit) {
         level.draw_level(room, ecs);
@@ -173,6 +209,7 @@ int main() {
         int player_color = ecs.get_component<Renderable>(player).symbol_color;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
+        level.m_tile_contents[level.position_to_index(player_x, player_y)].push_back(player);
         for (auto& renderable : ecs.get_component_map<Renderable>()->component_map) {
             Entity entity = renderable.first;
             if (entity != player) {
@@ -197,7 +234,7 @@ int main() {
 
         switch(runstate) {
             case RunState::PreRun: {
-                runstate = RunState::PlayerTurn;
+                runstate = RunState::PlayerInput;
                 break;
             }
             case RunState::PlayerInput:
@@ -207,12 +244,14 @@ int main() {
             }
             case RunState::PlayerTurn:
             {
+                ecs.run_systems(ecs);
                 runstate = RunState::AiTurn;
                 break;
             }
 
             case RunState::AiTurn:
             {
+                ecs.run_systems(ecs);
                 runstate = RunState::PlayerInput;
                 break;
             }
@@ -224,6 +263,7 @@ int main() {
             }
             default:
             {
+                ecs.run_systems(ecs);
                 runstate = RunState::PlayerInput;
                 break;
             }

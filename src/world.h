@@ -42,7 +42,6 @@ public:
     template <typename T>
     void add_component(Entity entity, T component) {
         component_manager->add_component(entity, component);
-    
         auto signature = entity_manager->get_signature(entity);
         signature.set(component_manager->get_component_type<T>(), true);
         entity_manager->set_signature(entity, signature);
@@ -52,7 +51,7 @@ public:
     
     template <typename T>
     void remove_component(Entity entity) {
-        std::cout << "Removing component: " << typeid(T).name() << std::endl;
+        //std::cout << "Removing component: " << typeid(T).name() << std::endl;
         component_manager->remove_component<T>(entity);
     
         auto signature = entity_manager->get_signature(entity);
@@ -101,11 +100,10 @@ public:
     }
     
     void run_systems(World& world) {
-        system_manager->run_systems(world);
+        system_manager->run_systems(world, entity_manager);
         maintain();
     }
 
-private:
     void maintain() {
         while (!changed_entities.empty()) {
             Entity entity = changed_entities.front();
