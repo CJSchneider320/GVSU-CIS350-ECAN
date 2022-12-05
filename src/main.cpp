@@ -3,9 +3,11 @@
 #include <locale>
 #include <string>
 
+#include "components.h"
 #include "map.h"
 #include "world.h"
-
+#include "player.h"
+#include "run_state.h"
 
 int main() {
     // ---------------------------------------------------------------
@@ -21,7 +23,8 @@ int main() {
         return -1;
     }
     
-    noecho();
+    //noecho();
+    keypad(stdscr, true);
     start_color();
     // ---------------------------------------------------------------
 
@@ -56,13 +59,14 @@ int main() {
     level_1 += "#####.....#######d##"; // 5
     level_1 += "#...#.....#........#"; // 6
     level_1 += "#...D..l..D........#"; // 7
-    level_1 += "#...#.....#........#"; // 8
+    level_1 += "#...#.....#.......l#"; // 8
     level_1 += "#...#.....#!!!!!!!!#"; // 9
     level_1 += "#...#.....#........#"; // 10
     level_1 += "#...#.....#........#"; // 11
-    level_1 += "#.@.#.....#........#"; // 12
-    level_1 += "#...#.....#........#"; // 13
-    level_1 += "####################"; // 14
+    level_1 += "#...###D###........#"; // 12
+    level_1 += "#.@.#.....#........#"; // 13
+    level_1 += "#...#.....#........#"; // 14
+    level_1 += "####################"; // 15
 
     std::string level_2;
     level_2 +=  "####################"; // 1
@@ -135,52 +139,80 @@ int main() {
     // ---------------------------------------------------------------
 
     Map level;
+
     // ---------------------------------------------------------------
     // Initialize the ECS.
+
     World ecs;
     ecs.init();
     ecs.register_component<Position>();
     ecs.register_component<Renderable>();
+    ecs.register_component<CPlayer>();
+
     // ---------------------------------------------------------------
 
-    level.create_preset_level(level_3);
+    WINDOW* room = newwin(level.m_height, level.m_width, 5, 10);
 
+    bool quit = false;
+    RunState runstate = RunState::PreRun;
+
+    level.create_preset_level(level_1);
     // Create Player entity
     Entity player = ecs.create_entity();
     ecs.add_component(player, level.index_to_positon(level.m_player_start));
     ecs.add_component(player, Renderable { "@", FWHITEBBLACK });
 
-    WINDOW* room = newwin(level.m_height, level.m_width, 5, 10);
 
-    int player_input;
-    bool quit = false;
 
     while (!quit) {
         level.draw_level(room);
-
-
         std::string player_glyph = ecs.get_component<Renderable>(player).glyph;
         int player_color = ecs.get_component<Renderable>(player).symbol_color;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
 
-        while(!quit) {
-            wmove(room, player_y, player_x);
-            wattron(room, COLOR_PAIR(player_color));
-            wprintw(room, "%s", player_glyph.c_str());
-            wattroff(room, COLOR_PAIR(player_color));
+        wmove(room, player_y, player_x);
+        wattron(room, COLOR_PAIR(player_color));
+        wprintw(room, "%s", player_glyph.c_str());
+        wattroff(room, COLOR_PAIR(player_color));
 
-            refresh();
-            wrefresh(room);
+        refresh();
+        wrefresh(room);
 
+        switch(runstate) {
+            case RunState::PreRun: {
+                runstate = RunState::PlayerTurn;
+                break;
+            }
+            case RunState::PlayerInput:
+            {
+                runstate = Player::player_input(player, level, ecs);
+                break;
+            }
+            case RunState::PlayerTurn:
+            {
+                runstate = RunState::AiTurn;
+                break;
+            }
 
-            player_input = getch();
-            if (player_input == 'q') {
+            case RunState::AiTurn:
+            {
+                runstate = RunState::PlayerInput;
+                break;
+            }
+
+            case RunState::Exit:
+            {
                 quit = true;
-            } else {
-                continue;
+                break;
+            }
+            default:
+            {
+                runstate = RunState::PlayerInput;
+                break;
             }
         }
+
     }
 
     endwin();

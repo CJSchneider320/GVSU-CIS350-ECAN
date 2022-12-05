@@ -1,3 +1,6 @@
+#ifndef MAP_H_
+#define MAP_H_
+
 #include <string>
 #include <vector>
 #include <ncurses.h>
@@ -78,11 +81,16 @@ public:
     }
 
     Position index_to_positon(int index) {
-        Position pos {
-            m_player_start % m_width,
-            m_player_start / m_width
-        };
+        Position pos;
+        pos.x = index % m_width;
+        pos.y = index / m_width;
 
         return pos;
     }
+
+    int position_to_index(int x, int y) {
+        return (y * (m_width)) + x;
+    }
 };
+
+#endif
