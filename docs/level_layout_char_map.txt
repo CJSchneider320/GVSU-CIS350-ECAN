@@ -13,10 +13,6 @@ player start ----------- @
 robot ------------------ R
 anti-robot ------------- r
 chest ------------------ c
-up-arrow --------------- ^
-right-arrow ------------ >
-down-arrow ------------- v
-left-arrow ------------- <
 stairs down (entrance) - s
 stairs up (exit) ------- S
 spike ------------------ !
@@ -25,4 +21,3 @@ heavy pressure plate --- P
 Lever (off default) ---- l
 Lever (on default) ----- L
 Button ----------------- B
-enemy ------------------ E
