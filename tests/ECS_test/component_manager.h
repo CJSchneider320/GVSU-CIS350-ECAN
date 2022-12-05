@@ -37,6 +37,12 @@ public:
         return component_types[type_name];
     }
     
+    //ComponentType get_component_type(const char* type_name) { std::cout << type_name << std::endl;
+    //    assert(component_types.find(type_name) != component_types.end() && "Cannot get a component type for an unregistered component.");
+    //
+    //    return component_types[type_name];
+    //}
+    
     template <typename T>
     void add_component(Entity entity, T component) {
         get_component_map<T>()->insert_component(entity, component);
