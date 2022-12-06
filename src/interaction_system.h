@@ -5,8 +5,10 @@
 #include "chars.h"
 #include "colordata.h"
 #include "map.h"
+#include "game_log.h"
 
 extern Map level;
+extern GameLog gamelog;
 
 class Interaction : public System {
     void run(World& ecs) {
@@ -20,10 +22,12 @@ class Interaction : public System {
                     if (lever.second.active) {
                         lever.second.active = false;
                         lever_render.glyph = LEVER_OFF;
+                        gamelog.printlog("You pull the lever.");
                         toggle_connections(ecs, lever.first);
                     } else {
                         lever.second.active = true;
                         lever_render.glyph = LEVER_ON;
+                        gamelog.printlog("You pull the lever.");
                         toggle_connections(ecs, lever.first);
                     }
                 }
@@ -33,26 +37,27 @@ class Interaction : public System {
     }
 
     void toggle_connections(World& ecs, Entity entity) {
-            auto& lever = ecs.get_component<Lever>(entity);
-            auto& connections = ecs.get_component<Connection>(entity);
-            auto& positions = ecs.get_component_map<Position>()->component_map;
-            for (auto connection : connections.targets) {
-                for (auto& pos : positions) {
-                    if (level.position_to_index(pos.second.x, pos.second.y) == connection) {
-                        auto& door = ecs.get_component<Door>(pos.first);
-                        auto& door_render = ecs.get_component<Renderable>(pos.first);
-                        if (door.d_status) {
-                            door.d_status = false;
-                            door_render.glyph = DOOR;
-                            level.m_blocked_tiles[connection] = true;
-                            
-                        } else {
-                            door.d_status = true;
-                            door_render.glyph = LEFT_OPEN_DOOR;
-                            level.m_blocked_tiles[connection] = false;
-                        }
+        auto& lever = ecs.get_component<Lever>(entity);
+        auto& connections = ecs.get_component<Connection>(entity);
+        auto& positions = ecs.get_component_map<Position>()->component_map;
+        for (auto connection : connections.targets) {
+            for (auto& pos : positions) {
+                if (level.position_to_index(pos.second.x, pos.second.y) == connection) {
+                    auto& door = ecs.get_component<Door>(pos.first);
+                    auto& door_render = ecs.get_component<Renderable>(pos.first);
+                    if (door.d_status) {
+                        door.d_status = false;
+                        door_render.glyph = DOOR;
+                        level.m_blocked_tiles[connection] = true;
+                        gamelog.printlog("You hear a door slam shut.");
+                    } else {
+                        door.d_status = true;
+                        door_render.glyph = LEFT_OPEN_DOOR;
+                        level.m_blocked_tiles[connection] = false;
+                        gamelog.printlog("You hear a door scrape open.");
                     }
                 }
+            }
         }
     }
 };

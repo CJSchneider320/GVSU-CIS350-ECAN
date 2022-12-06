@@ -9,10 +9,12 @@
 #include "player.h"
 #include "run_state.h"
 #include "interaction_system.h"
+#include "game_log.h"
 //#include "toggle_connections_system.h"
 
 // Make the Map global
 Map level;
+GameLog gamelog;
 
 void clear_entities(Entity entity, World& ecs) {
     auto positions = ecs.get_component_map<Position>()->component_map;
@@ -68,7 +70,16 @@ void clear_entities(Entity entity, World& ecs) {
             ecs.destroy_entity(stair.first);
         }
     }
+    auto chests = ecs.get_component_map<Chest>()->component_map;
+    if (!chests.empty()) {
+        for (auto chest : chests) {
+            ecs.destroy_entity(chest.first);
+        }
+    }
 }
+
+// -------------------------------------------------------------------
+// Main Program
 
 int main() {
     // ---------------------------------------------------------------
@@ -300,6 +311,7 @@ int main() {
     ecs.register_component<Interactable>();
     ecs.register_component<WantsToInteract>();
     ecs.register_component<Stairs>();
+    ecs.register_component<Chest>();
 
     // Register Systems
     auto interaction = ecs.register_system<Interaction>();
@@ -309,7 +321,8 @@ int main() {
 
     // ---------------------------------------------------------------
 
-    WINDOW* room = newwin(level.m_height, level.m_width, 5, 10);
+    WINDOW* room = newwin(level.m_height, level.m_width, 0, 30);
+    gamelog.init();
 
     bool quit = false;
     level.m_current_level = 1;
@@ -352,6 +365,7 @@ int main() {
 
         refresh();
         wrefresh(room);
+        wrefresh(gamelog.gamelog);
 
         switch(runstate) {
             case RunState::PreRun:

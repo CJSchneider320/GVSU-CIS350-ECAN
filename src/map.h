@@ -18,6 +18,7 @@ enum TileType {
     LeverTile,
     StairsEnter,
     StairsExit,
+    ChestTile,
     Unknown,
 };
 
@@ -189,6 +190,17 @@ public:
                             Renderable {STAIRS_ENTER, FCYANBBLACK});
                     ecs.add_component(stairs_enter, index_to_position(index));
                     m_tile_contents.push_back(std::vector<Entity>(stairs_enter));
+                    break;
+                }
+                case 'c':
+                {
+                    m_tiles.push_back(TileType::ChestTile);
+                    m_blocked_tiles.push_back(false);
+                    Entity chest = ecs.create_entity();
+                    ecs.add_component(chest, index_to_position(index));
+                    ecs.add_component(chest,
+                            Renderable {CHEST, FYELLOWBBLACK});
+                    ecs.add_component(chest, Chest {});
                     break;
                 }
                 default:

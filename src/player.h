@@ -6,6 +6,9 @@
 #include "map.h"
 #include "run_state.h"
 #include "world.h"
+#include "game_log.h"
+
+extern GameLog gamelog;
 
 class Player {
 public:
@@ -77,11 +80,13 @@ public:
                                 && level.position_to_index(player_pos.x, player_pos.y) == level.position_to_index(position.x, position.y)) {
                                 level.m_previous_level = level.m_current_level;
                                 level.m_current_level += 1;
+                                gamelog.printlog("You ascend the staircase.");
                                 return RunState::PreRun;
                             } else if (!stair.second.is_exit
                                 && level.position_to_index(player_pos.x, player_pos.y) == level.position_to_index(position.x, position.y)) {
                                 level.m_previous_level = level.m_current_level;
                                 level.m_current_level -= 1;
+                                gamelog.printlog("You descend the staircase.");
                                 return RunState::PreRun;
                             }
                         }

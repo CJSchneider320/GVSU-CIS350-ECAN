@@ -42,4 +42,6 @@ struct Stairs {
     bool is_exit;
 };
 
+struct Chest {};
+
 #endif
