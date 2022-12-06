@@ -14,6 +14,7 @@ struct Position {
 struct Renderable {
     std::string glyph;
     int symbol_color;
+    int render_order;
 };
 
 struct CPlayer {};
@@ -43,5 +44,11 @@ struct Stairs {
 };
 
 struct Chest {};
+
+struct PressurePlate {
+    bool is_stood_on;
+};
+
+struct Robot {};
 
 #endif

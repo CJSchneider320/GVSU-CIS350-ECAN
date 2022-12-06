@@ -19,6 +19,7 @@ enum TileType {
     StairsEnter,
     StairsExit,
     ChestTile,
+    PressurePlateTile,
     Unknown,
 };
 
@@ -122,7 +123,7 @@ public:
                     Entity door = ecs.create_entity();
                     ecs.add_component(door, Door {false});
                     ecs.add_component(door, index_to_position(index));
-                    ecs.add_component(door, Renderable {std::string(DOOR), FYELLOWBBLACK});
+                    ecs.add_component(door, Renderable {std::string(DOOR), FYELLOWBBLACK, 0});
                     m_doors.push_back(door);
                     m_tile_contents.push_back(std::vector<Entity>({door}));
                     break;
@@ -134,7 +135,7 @@ public:
                     Entity door = ecs.create_entity();
                     ecs.add_component(door, Door {true});
                     ecs.add_component(door, index_to_position(index));
-                    ecs.add_component(door, Renderable {std::string(LEFT_OPEN_DOOR), FYELLOWBBLACK});
+                    ecs.add_component(door, Renderable {std::string(LEFT_OPEN_DOOR), FYELLOWBBLACK, 0});
                     m_doors.push_back(door);
                     m_tile_contents.push_back(std::vector<Entity>(door));
                     break;
@@ -145,7 +146,7 @@ public:
                     m_blocked_tiles.push_back(false);
                     Entity lever = ecs.create_entity();
                     ecs.add_component(lever,
-                        Renderable { LEVER_OFF, FGREENBBLACK });
+                        Renderable { LEVER_OFF, FGREENBBLACK, 0});
                     ecs.add_component(lever,
                         index_to_position(index));
                     ecs.add_component(lever, Connection { connections[index] });
@@ -160,7 +161,7 @@ public:
                     m_blocked_tiles.push_back(false);
                     Entity lever = ecs.create_entity();
                     ecs.add_component(lever,
-                        Renderable { LEVER_ON, FGREENBBLACK });
+                        Renderable { LEVER_ON, FGREENBBLACK, 0 });
                     ecs.add_component(lever, index_to_position(index));
                     ecs.add_component(lever, Connection { connections[index] });
                     ecs.add_component(lever, Lever { true });
@@ -175,7 +176,7 @@ public:
                     Entity stairs_exit = ecs.create_entity();
                     ecs.add_component(stairs_exit, Stairs { true });
                     ecs.add_component(stairs_exit,
-                            Renderable {STAIRS_EXIT, FCYANBBLACK});
+                            Renderable {STAIRS_EXIT, FCYANBBLACK, 0});
                     ecs.add_component(stairs_exit, index_to_position(index));
                     m_tile_contents.push_back(std::vector<Entity>(stairs_exit));
                     break;
@@ -187,7 +188,7 @@ public:
                     Entity stairs_enter = ecs.create_entity();
                     ecs.add_component(stairs_enter, Stairs { false });
                     ecs.add_component(stairs_enter,
-                            Renderable {STAIRS_ENTER, FCYANBBLACK});
+                            Renderable {STAIRS_ENTER, FCYANBBLACK, 0});
                     ecs.add_component(stairs_enter, index_to_position(index));
                     m_tile_contents.push_back(std::vector<Entity>(stairs_enter));
                     break;
@@ -199,8 +200,34 @@ public:
                     Entity chest = ecs.create_entity();
                     ecs.add_component(chest, index_to_position(index));
                     ecs.add_component(chest,
-                            Renderable {CHEST, FYELLOWBBLACK});
+                            Renderable {CHEST, FYELLOWBBLACK, 1});
                     ecs.add_component(chest, Chest {});
+                    m_tile_contents.push_back(std::vector<Entity>(chest));
+                    break;
+                }
+                case 'p':
+                {
+                    m_tiles.push_back(TileType::ChestTile);
+                    m_blocked_tiles.push_back(false);
+                    Entity plate = ecs.create_entity();
+                    ecs.add_component(plate, index_to_position(index));
+                    ecs.add_component(plate,
+                            Renderable { PRESSURE_PLATE, FMAGENTABBLACK, 0 });
+                    ecs.add_component(plate, Connection { connections[index] });
+                    ecs.add_component(plate, PressurePlate { false });
+                    m_tile_contents.push_back(std::vector<Entity>(plate));
+                    break;
+                }
+                case 'R':
+                {
+                    m_tiles.push_back(TileType::Floor);
+                    m_blocked_tiles.push_back(true);
+                    Entity robot = ecs.create_entity();
+                    ecs.add_component(robot, Robot {});
+                    ecs.add_component(robot, index_to_position(index));
+                    ecs.add_component(robot,
+                            Renderable { ROBOT, FBLUEBBLACK, 2 });
+                    m_tile_contents.push_back(std::vector<Entity>(robot));
                     break;
                 }
                 default:

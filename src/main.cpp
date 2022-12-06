@@ -10,11 +10,12 @@
 #include "run_state.h"
 #include "interaction_system.h"
 #include "game_log.h"
-//#include "toggle_connections_system.h"
+#include "robot_ai_system.h"
 
 // Make the Map global
 Map level;
 GameLog gamelog;
+const int MAX_RENDER_ORDER = 2;
 
 void clear_entities(Entity entity, World& ecs) {
     auto positions = ecs.get_component_map<Position>()->component_map;
@@ -103,8 +104,9 @@ int main() {
 
     // ---------------------------------------------------------------
     // Initialize colors.
-    init_pair(FYELLOWBBLACK, COLOR_YELLOW, COLOR_BLACK);
     init_pair(FGREENBBLACK, COLOR_GREEN, COLOR_BLACK);
+    init_pair(FYELLOWBBLACK, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(FBLUEBBLACK, COLOR_BLUE, COLOR_BLACK);
     init_pair(FMAGENTABBLACK, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(FCYANBBLACK, COLOR_CYAN, COLOR_BLACK);
     init_pair(FWHITEBBLACK, COLOR_WHITE, COLOR_BLACK);
@@ -304,7 +306,7 @@ int main() {
     // Register Components
     ecs.register_component<Position>();
     ecs.register_component<Renderable>();
-    //ecs.register_component<CPlayer>();
+    ecs.register_component<CPlayer>();
     ecs.register_component<Door>();
     ecs.register_component<Connection>();
     ecs.register_component<Lever>();
@@ -312,12 +314,17 @@ int main() {
     ecs.register_component<WantsToInteract>();
     ecs.register_component<Stairs>();
     ecs.register_component<Chest>();
+    ecs.register_component<PressurePlate>();
+    ecs.register_component<Robot>();
 
     // Register Systems
     auto interaction = ecs.register_system<Interaction>();
     interaction->components.insert(ecs.get_component_type<Position>());
     interaction->components.insert(ecs.get_component_type<WantsToInteract>());
     ecs.set_system_signature<Interaction>();
+    auto robot_ai = ecs.register_system<RobotAiSystem>();
+    robot_ai->components.insert(ecs.get_component_type<Robot>());
+    ecs.set_system_signature<RobotAiSystem>();
 
     // ---------------------------------------------------------------
 
@@ -325,13 +332,14 @@ int main() {
     gamelog.init();
 
     bool quit = false;
-    level.m_current_level = 1;
+    level.m_current_level = 3;
 
     RunState runstate = RunState::PreRun;
 
     // Create Player entity
     Entity player = ecs.create_entity();
-    ecs.add_component(player, Renderable { "@", FGREENBBLACK });
+    ecs.add_component(player, Renderable { "@", FGREENBBLACK, 10});
+    ecs.add_component(player, CPlayer {});
 
     level.create_preset_level(baseline_level, connections_baseline, player, ecs);
     ecs.add_component(player, level.index_to_position(level.m_player_start));
@@ -344,17 +352,22 @@ int main() {
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
         level.m_tile_contents[level.position_to_index(player_x, player_y)].push_back(player);
-        for (auto& renderable : ecs.get_component_map<Renderable>()->component_map) {
-            Entity entity = renderable.first;
-            if (entity != player) {
-                std::string glyph = renderable.second.glyph;
-                int color = renderable.second.symbol_color;
-                auto& position = ecs.get_component<Position>(entity);
 
-                wmove(room, position.y, position.x);
-                wattron(room, COLOR_PAIR(color));
-                wprintw(room, "%s", glyph.c_str());
-                wattroff(room, COLOR_PAIR(color));
+        for (int render_order = 0; render_order <= MAX_RENDER_ORDER; render_order++) {
+            for (auto& renderable : ecs.get_component_map<Renderable>()->component_map) {
+                if (renderable.second.render_order == render_order) {
+                    Entity entity = renderable.first;
+                    if (entity != player) {
+                        std::string glyph = renderable.second.glyph;
+                        int color = renderable.second.symbol_color;
+                        auto& position = ecs.get_component<Position>(entity);
+
+                        wmove(room, position.y, position.x);
+                        wattron(room, COLOR_PAIR(color));
+                        wprintw(room, "%s", glyph.c_str());
+                        wattroff(room, COLOR_PAIR(color));
+                    }
+                }
             }
         }
 
@@ -387,7 +400,7 @@ int main() {
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
-
+                        gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
                         break;
                     }
                     case 2:
@@ -397,6 +410,7 @@ int main() {
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
+                        gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
                         break;
                     }
                     case 3:
@@ -406,6 +420,7 @@ int main() {
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
+                        gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
                         break;
                     }
                     case 4:
@@ -415,6 +430,7 @@ int main() {
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
+                        gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
                         break;
                     }
                     case 5:
@@ -424,9 +440,11 @@ int main() {
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
+                        gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
                         break;
                     }
                 }
+                ecs.run_systems(ecs);
                 runstate = RunState::PlayerInput;
                 break;
             }
