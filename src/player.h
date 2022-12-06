@@ -69,6 +69,23 @@ public:
                             ecs.add_component(player, WantsToInteract { interactable.first });
                         }
                     }
+                    auto& stairs = ecs.get_component_map<Stairs>()->component_map;
+                    if(!stairs.empty()) {
+                        for (auto stair : stairs) {
+                            auto& position = ecs.get_component<Position>(stair.first);
+                            if (stair.second.is_exit
+                                && level.position_to_index(player_pos.x, player_pos.y) == level.position_to_index(position.x, position.y)) {
+                                level.m_previous_level = level.m_current_level;
+                                level.m_current_level += 1;
+                                return RunState::PreRun;
+                            } else if (!stair.second.is_exit
+                                && level.position_to_index(player_pos.x, player_pos.y) == level.position_to_index(position.x, position.y)) {
+                                level.m_previous_level = level.m_current_level;
+                                level.m_current_level -= 1;
+                                return RunState::PreRun;
+                            }
+                        }
+                    }
                 }
                 return RunState::PlayerTurn;
             }

@@ -47,6 +47,9 @@ public:
         entity_manager->set_signature(entity, signature);
     
         changed_entities.push(entity);
+        //if (!changed_entities.empty()) {
+        //    maintain();
+        //}
     }
     
     template <typename T>

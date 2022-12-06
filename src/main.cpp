@@ -9,10 +9,66 @@
 #include "player.h"
 #include "run_state.h"
 #include "interaction_system.h"
-#include "toggle_connections_system.h"
+//#include "toggle_connections_system.h"
 
 // Make the Map global
 Map level;
+
+void clear_entities(Entity entity, World& ecs) {
+    auto positions = ecs.get_component_map<Position>()->component_map;
+    if (!positions.empty()) {
+        for (auto position : positions) {
+            if (entity != position.first) {
+                ecs.destroy_entity(position.first);
+            }
+        }
+        //ecs.maintain();
+    }
+    auto renderables = ecs.get_component_map<Renderable>()->component_map;
+    if (!renderables.empty()) {
+        for (auto renderable : renderables) {
+            if (entity != renderable.first){
+                ecs.destroy_entity(renderable.first);
+            }
+        }
+    }
+    auto doors = ecs.get_component_map<Door>()->component_map;
+    if (!renderables.empty()) {
+        for (auto door : doors) {
+            ecs.destroy_entity(door.first);
+        }
+    }
+    auto connections = ecs.get_component_map<Connection>()->component_map;
+    if (!connections.empty()) {
+        for (auto connection : connections) {
+            ecs.destroy_entity(connection.first);
+        }
+    }
+    auto levers = ecs.get_component_map<Lever>()->component_map;
+    if (!levers.empty()) {
+        for (auto lever : levers) {
+            ecs.destroy_entity(lever.first);
+        }
+    }
+    auto interactables = ecs.get_component_map<Interactable>()->component_map;
+    if (!interactables.empty()) {
+        for (auto interactable : interactables) {
+            ecs.destroy_entity(interactable.first);
+        }
+    }
+    auto wants_interacts = ecs.get_component_map<WantsToInteract>()->component_map;
+    if (!wants_interacts.empty()) {
+        for (auto wants_interact : wants_interacts) {
+            ecs.destroy_entity(wants_interact.first);
+        }
+    }
+    auto stairs = ecs.get_component_map<Stairs>()->component_map;
+    if (!stairs.empty()) {
+        for (auto stair : stairs) {
+            ecs.destroy_entity(stair.first);
+        }
+    }
+}
 
 int main() {
     // ---------------------------------------------------------------
@@ -36,12 +92,13 @@ int main() {
 
     // ---------------------------------------------------------------
     // Initialize colors.
-    init_pair(FWHITEBBLACK, COLOR_WHITE, COLOR_BLACK);
     init_pair(FYELLOWBBLACK, COLOR_YELLOW, COLOR_BLACK);
     init_pair(FGREENBBLACK, COLOR_GREEN, COLOR_BLACK);
+    init_pair(FMAGENTABBLACK, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(FCYANBBLACK, COLOR_CYAN, COLOR_BLACK);
+    init_pair(FWHITEBBLACK, COLOR_WHITE, COLOR_BLACK);
 
     // ---------------------------------------------------------------
-
 
     // Define levels
 	
@@ -82,6 +139,8 @@ int main() {
     baseline_level += "#..................#";
     baseline_level += "#..................#";
     baseline_level += "####################";
+
+    std::unordered_map<int, std::vector<int>> connections_baseline;
 
     std::string level_1;
     level_1 += "####################"; // 1
@@ -234,13 +293,13 @@ int main() {
     // Register Components
     ecs.register_component<Position>();
     ecs.register_component<Renderable>();
-    ecs.register_component<CPlayer>();
+    //ecs.register_component<CPlayer>();
     ecs.register_component<Door>();
     ecs.register_component<Connection>();
     ecs.register_component<Lever>();
     ecs.register_component<Interactable>();
     ecs.register_component<WantsToInteract>();
-    ecs.register_component<WantsToToggleConnections>();
+    ecs.register_component<Stairs>();
 
     // Register Systems
     auto interaction = ecs.register_system<Interaction>();
@@ -253,18 +312,22 @@ int main() {
     WINDOW* room = newwin(level.m_height, level.m_width, 5, 10);
 
     bool quit = false;
+    level.m_current_level = 1;
+
     RunState runstate = RunState::PreRun;
 
-    level.create_preset_level(level_1, connections_level_1, ecs);
     // Create Player entity
     Entity player = ecs.create_entity();
+    ecs.add_component(player, Renderable { "@", FGREENBBLACK });
+
+    level.create_preset_level(baseline_level, connections_baseline, player, ecs);
     ecs.add_component(player, level.index_to_position(level.m_player_start));
-    ecs.add_component(player, Renderable { "@", FWHITEBBLACK });
 
     while (!quit) {
         level.draw_level(room, ecs);
         std::string player_glyph = ecs.get_component<Renderable>(player).glyph;
         int player_color = ecs.get_component<Renderable>(player).symbol_color;
+        int player_emphasis = A_BOLD;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
         level.m_tile_contents[level.position_to_index(player_x, player_y)].push_back(player);
@@ -283,15 +346,73 @@ int main() {
         }
 
         wmove(room, player_y, player_x);
-        wattron(room, COLOR_PAIR(player_color));
+        wattron(room, COLOR_PAIR(player_color) | player_emphasis);
         wprintw(room, "%s", player_glyph.c_str());
-        wattroff(room, COLOR_PAIR(player_color));
+        wattroff(room, COLOR_PAIR(player_color) | player_emphasis);
 
         refresh();
         wrefresh(room);
 
         switch(runstate) {
-            case RunState::PreRun: {
+            case RunState::PreRun:
+            {
+                level.m_tiles.clear();
+                level.m_blocked_tiles.clear();
+                level.m_doors.clear();
+                for (auto tile_content : level.m_tile_contents) {
+                    tile_content.clear();
+                }
+                level.m_tile_contents.clear();
+                clear_entities(player, ecs);
+
+                switch (level.m_current_level) {
+                    case 1:
+                    {
+                        level.create_preset_level(level_1, connections_level_1, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+
+                        break;
+                    }
+                    case 2:
+                    {
+                        level.create_preset_level(level_2, connections_level_2, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+                        break;
+                    }
+                    case 3:
+                    {
+                        level.create_preset_level(level_3, connections_level_3, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+                        break;
+                    }
+                    case 4:
+                    {
+                        level.create_preset_level(level_3, connections_level_4, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+                        break;
+                    }
+                    case 5:
+                    {
+                        level.create_preset_level(level_5, connections_level_5, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+                        break;
+                    }
+                }
                 runstate = RunState::PlayerInput;
                 break;
             }
@@ -333,3 +454,4 @@ int main() {
     
     return 0;
 }
+

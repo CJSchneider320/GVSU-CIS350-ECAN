@@ -52,7 +52,7 @@ public:
     }
     
     void entity_signature_changed(Entity entity, Signature entity_signature) {
-        for (auto& pair : systems_map) {
+        for (auto pair : systems_map) {
             std::string type_name = pair.first;
             auto system = pair.second;
             const Signature system_signature = system_signatures_map[type_name];

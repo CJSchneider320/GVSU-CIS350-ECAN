@@ -16,6 +16,8 @@ enum TileType {
     Spike,
     DoorTile,
     LeverTile,
+    StairsEnter,
+    StairsExit,
     Unknown,
 };
 
@@ -31,6 +33,8 @@ public:
     std::vector<bool> m_blocked_tiles;
     std::vector<Entity> m_doors;
     std::vector<std::vector<Entity>> m_tile_contents;
+    int m_current_level = 0;
+    int m_previous_level = 0;
     int m_player_start = 0;
     int m_height = 15;
     int m_width = 20;
@@ -40,9 +44,11 @@ public:
         int y = 0;
         std::string glyph;
         int color;
+        int emphasis;
         int index = 0;
 
         for (TileType tile : m_tiles) {
+            emphasis = 0;
             wmove(room, y, x);
             switch (tile) {
                 case TileType::Floor:
@@ -52,6 +58,7 @@ public:
                 case TileType::Wall:
                     glyph = "#";
                     color = FWHITEBBLACK;
+                    emphasis = A_BOLD;
                     break;
                 case TileType::Spike:
                     glyph = SPIKE;
@@ -62,12 +69,12 @@ public:
                     break;
                 default:
                     glyph = "?";
-                    color = FWHITEBBLACK;
+                    color = FMAGENTABBLACK;
                    break;
             }
-            wattron(room, COLOR_PAIR(color));
+            wattron(room, COLOR_PAIR(color) | emphasis);
             wprintw(room, "%s", glyph.c_str());
-            wattroff(room, COLOR_PAIR(color));
+            wattroff(room, COLOR_PAIR(color) | emphasis);
 
             x += 1;
             if (x == m_width) {
@@ -77,7 +84,7 @@ public:
         }
     }
 
-    void create_preset_level(std::string a_level, std::unordered_map<int, std::vector<int>> connections, World& ecs) {
+    void create_preset_level(std::string a_level, std::unordered_map<int, std::vector<int>> connections, Entity player, World& ecs) {
         int index = 0;
         for (char tile : a_level) {
             switch (tile) {
@@ -94,7 +101,12 @@ public:
                 case '@':
                     m_tiles.push_back(TileType::Floor);
                     m_blocked_tiles.push_back(false);
-                    m_player_start = a_level.find('@');
+                    if (m_previous_level < m_current_level) {
+                        m_player_start = a_level.find('@');
+                    } else {
+                        auto& player_pos = ecs.get_component<Position>(player);
+                        m_player_start = position_to_index(player_pos.x, player_pos.y);
+                    }
                     m_tile_contents.push_back(std::vector<Entity>());
                     break;
                 case '!':
@@ -148,12 +160,35 @@ public:
                     Entity lever = ecs.create_entity();
                     ecs.add_component(lever,
                         Renderable { LEVER_ON, FGREENBBLACK });
-                    ecs.add_component(lever,
-                        index_to_position(index));
+                    ecs.add_component(lever, index_to_position(index));
                     ecs.add_component(lever, Connection { connections[index] });
                     ecs.add_component(lever, Lever { true });
                     ecs.add_component(lever, Interactable {});
                     m_tile_contents.push_back(std::vector<Entity>(lever));
+                    break;
+                }
+                case 'S':
+                {
+                    m_tiles.push_back(TileType::StairsExit);
+                    m_blocked_tiles.push_back(false);
+                    Entity stairs_exit = ecs.create_entity();
+                    ecs.add_component(stairs_exit, Stairs { true });
+                    ecs.add_component(stairs_exit,
+                            Renderable {STAIRS_EXIT, FCYANBBLACK});
+                    ecs.add_component(stairs_exit, index_to_position(index));
+                    m_tile_contents.push_back(std::vector<Entity>(stairs_exit));
+                    break;
+                }
+                case 's':
+                {
+                    m_tiles.push_back(TileType::StairsEnter);
+                    m_blocked_tiles.push_back(false);
+                    Entity stairs_enter = ecs.create_entity();
+                    ecs.add_component(stairs_enter, Stairs { false });
+                    ecs.add_component(stairs_enter,
+                            Renderable {STAIRS_ENTER, FCYANBBLACK});
+                    ecs.add_component(stairs_enter, index_to_position(index));
+                    m_tile_contents.push_back(std::vector<Entity>(stairs_enter));
                     break;
                 }
                 default:

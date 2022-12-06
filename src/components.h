@@ -38,6 +38,8 @@ struct WantsToInteract {
     Entity target;
 };
 
-struct WantsToToggleConnections {};
+struct Stairs {
+    bool is_exit;
+};
 
 #endif
