@@ -348,7 +348,7 @@ int main() {
     gamelog.init();
 
     bool quit = false;
-    level.m_current_level = 5;
+    level.m_current_level = 1;
 
     RunState runstate = RunState::PreRun;
 

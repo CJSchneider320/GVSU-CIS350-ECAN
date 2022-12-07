@@ -12,7 +12,6 @@
 extern Map level;
 extern GameLog gamelog;
 
-
 class Interaction : public System {
 public:
     void run(World& ecs) override {
@@ -53,7 +52,8 @@ public:
                 if (level.position_to_index(door_pos.x, door_pos.y) == connection) {
                     for (auto tile_content : level.m_tile_contents[level.position_to_index(door_pos.x, door_pos.y)]) {
                         if (tile_content != door.first) {
-                            gamelog.printlog("You can't seem to move the lever. Something must be preventing you from flipping it.");
+                            gamelog.printlog("You can't seem to move the lever.");
+                            gamelog.printlog("Something must be preventing you from flipping it.");
                             return;
                         }
                     }
