@@ -273,30 +273,30 @@ public:
         Position this_pos = index_to_position(index);
         // check the cardinal directions for walls or doors.
         if (this_pos.x != 0) {
-            if (level.at(position_to_index(this_pos.x - 1, this_pos.y)) == '#'
-                || level.at(position_to_index(this_pos.x - 1, this_pos.y)) == 'D'
-                || level.at(position_to_index(this_pos.x - 1, this_pos.y)) == 'd') {
+            if (level[position_to_index(this_pos.x - 1, this_pos.y)] == '#'
+                || level[position_to_index(this_pos.x - 1, this_pos.y)] == 'D'
+                || level[position_to_index(this_pos.x - 1, this_pos.y)] == 'd') {
                 mask += 1;
             }
         }
         if (this_pos.x != 19) {
-            if (level.at(position_to_index(this_pos.x + 1, this_pos.y)) == '#'
-                || level.at(position_to_index(this_pos.x + 1, this_pos.y)) == 'D'
-                || level.at(position_to_index(this_pos.x + 1, this_pos.y)) == 'd') {
+            if (level[position_to_index(this_pos.x + 1, this_pos.y)] == '#'
+                || level[position_to_index(this_pos.x + 1, this_pos.y)] == 'D'
+                || level[position_to_index(this_pos.x + 1, this_pos.y)] == 'd') {
                 mask += 2;
             }
         }
         if (this_pos.y != 0) {
-            if (level.at(position_to_index(this_pos.x, this_pos.y - 1)) == '#'
-                || level.at(position_to_index(this_pos.x, this_pos.y - 1)) == 'D'
-                || level.at(position_to_index(this_pos.x, this_pos.y - 1)) == 'd') {
+            if (level[position_to_index(this_pos.x, this_pos.y - 1)] == '#'
+                || level[position_to_index(this_pos.x, this_pos.y - 1)] == 'D'
+                || level[position_to_index(this_pos.x, this_pos.y - 1)] == 'd') {
                 mask += 4;
             }
         }
         if (this_pos.y != 14) {
-            if (level.at(position_to_index(this_pos.x, this_pos.y + 1)) == '#'
-                || level.at(position_to_index(this_pos.x, this_pos.y) + 1) == 'D'
-                || level.at(position_to_index(this_pos.x, this_pos.y) + 1) == 'd') {
+            if (level[position_to_index(this_pos.x, this_pos.y + 1)] == '#'
+                || level[position_to_index(this_pos.x, this_pos.y + 1)] == 'D'
+                || level[position_to_index(this_pos.x, this_pos.y + 1)] == 'd') {
                 mask += 8;
             }
         }
