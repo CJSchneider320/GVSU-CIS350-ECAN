@@ -38,8 +38,8 @@ public:
     std::vector<bool> m_blocked_tiles;
     std::vector<Entity> m_doors;
     std::vector<std::set<Entity>> m_tile_contents;
-    int m_current_level = 0;
-    int m_previous_level = 0;
+    int m_current_level = -1;
+    int m_previous_level = -1;
     int m_player_start = 0;
     int m_height = 15;
     int m_width = 20;

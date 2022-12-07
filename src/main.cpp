@@ -158,6 +158,24 @@ int main() {
 
     std::unordered_map<int, std::vector<int>> connections_baseline;
 
+    std::string level_0;
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "####################";
+    level_0 += "#..................#";
+    level_0 += "#..@............S..#";
+    level_0 += "#..................#";
+    level_0 += "####################";
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "....................";
+    level_0 += "....................";
+    std::unordered_map<int, std::vector<int>> connections_level_0;
+
     std::string level_1;
     level_1 += "####################"; // 1
     level_1 += "#...#.....#........#"; // 2
@@ -188,7 +206,7 @@ int main() {
     std::string level_2;
     level_2 +=  "####################"; // 1
     level_2 +=  "#...#.#....#@..#...#"; // 2
-    level_2 +=  "#.S.#.#.##.#s#.#.#.#"; // 3
+    level_2 +=  "#.S.#.#.##.#.#.#.#.#"; // 3
     level_2 +=  "#...D.#.##.###...#.#"; // 4
     level_2 +=  "#####.#..#...#.#.#.#"; // 5
     level_2 +=  "#.....##.###.#.#.#.#"; // 6
@@ -198,7 +216,7 @@ int main() {
     level_2 +=  "#.....#.######.....#"; // 10
     level_2 +=  "#...#.#.#...#......#"; // 11
     level_2 +=  "###.#.#.#......#####"; // 12
-    level_2 +=  "#.###.#.########...#"; // 13
+    level_2 +=  "#c###.#.########...#"; // 13
     level_2 +=  "#.....#..........#l#"; // 14
     level_2 +=  "####################"; // 15
 
@@ -207,8 +225,9 @@ int main() {
             level.position_to_index(E, 3)});
 			
     std::string level_3;
+       	      //ABCDEFGHIJKLMNOPQRST
     level_3 += "####################"; // 1
-    level_3 += "#.s.#.R.#...#.....S#"; // 2
+    level_3 += "#...#.R.#...#.....S#"; // 2
     level_3 += "#.@.#...#...#......#"; // 3
     level_3 += "#...#...#...#.R....#"; // 4
     level_3 += "#...#.d.#.d.#.#....#"; // 5
@@ -216,7 +235,7 @@ int main() {
     level_3 += "#...#.d.#.d.#......#"; // 7
     level_3 += "#...#...#.R.##d#####"; // 8
     level_3 += "#...#########......#"; // 9
-    level_3 += "#...#...#...#......#"; // 10
+    level_3 += "#...#...#.c.#......#"; // 10
     level_3 += "#...#...#...#......#"; // 11
     level_3 += "#...#...#...#......#"; // 12
     level_3 += "#...D.l.d...D......#"; // 13
@@ -246,7 +265,7 @@ int main() {
     std::string level_4;
     	      //ABCDEFGHIJKLMNOPQRST
     level_4 += "####################"; // 1
-    level_4 += "#.s.#.l....D.c#..l!#"; // 2
+    level_4 += "#...#.l....D.c#..l!#"; // 2
     level_4 += "#.@.#......####...!#"; // 3
     level_4 += "#...#####..#.!!!..!#"; // 4
     level_4 += "#..........D.!!!..!#"; // 5
@@ -289,7 +308,7 @@ int main() {
 
 std::string level_5;
     level_5 += "####################"; // 1
-    level_5 += "#s.......##!!!!!!!!#"; // 2
+    level_5 += "#........##!!!!!!!!#"; // 2
     level_5 += "#@.!.....##R.......#"; // 3
     level_5 += "#..!.....##!.......#"; // 4
     level_5 += "#..!.!...##..!...!.#"; // 5
@@ -309,6 +328,24 @@ std::string level_5;
             level.position_to_index(K, 13)});
 	connections_level_5[level.position_to_index(S, 13)] = std::vector<int>({
             level.position_to_index(J, 13)});
+
+std::string level_6;
+    level_6 += ".d.d...dccd...d..d..";
+    level_6 += ".d.d...d..d...d..d..";
+    level_6 += ".lL....d..d...d..d..";
+    level_6 += "..d....d..d...d..d..";
+    level_6 += "..d....dccd...dccd..";
+    level_6 += "####################";
+    level_6 += "#..................#";
+    level_6 += "#..@...............#";
+    level_6 += "#..................#";
+    level_6 += "####################";
+    level_6 += ".d....d...d...d...d.";
+    level_6 += ".d....d...d...dl..d.";
+    level_6 += ".d....d...d...d.l.d.";
+    level_6 += ".d.S..d...d...d..ld.";
+    level_6 += ".lL.lL....d...d...d.";
+    std::unordered_map<int, std::vector<int>> connections_level_6;
 
     // ---------------------------------------------------------------
 
@@ -362,7 +399,7 @@ std::string level_5;
     gamelog.init();
 
     bool quit = false;
-    level.m_current_level = 4;
+    level.m_current_level = 0;
 
     RunState runstate = RunState::PreRun;
 
@@ -438,6 +475,19 @@ std::string level_5;
 
                 // Determine which level it is.
                 switch (level.m_current_level) {
+                    case 0:
+                    {
+                        level.create_preset_level(level_0, connections_level_0, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+                        gamelog.printlog(std::string("Use WASD, HJKL, or Arrow Keys to move.").c_str());
+                        gamelog.printlog(std::string("Use the SPACEBAR to interact.").c_str());
+                        gamelog.printlog(std::string("Press G to check your coin purse..").c_str());
+                        gamelog.printlog(std::string("Ascend into the next level.").c_str());
+                        break;
+                    }
                     case 1:
                     {
                         level.create_preset_level(level_1, connections_level_1, player, ecs);
@@ -488,6 +538,19 @@ std::string level_5;
                         player_pos.y = player_start.y;
                         gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
                         gamelog.printlog("You feel a mystical link to your very soul.");
+                        break;
+                    }
+                    case 6:
+                    {
+                        level.create_preset_level(level_6, connections_level_6, player, ecs);
+                        Position& player_pos = ecs.get_component<Position>(player);
+                        Position player_start = level.index_to_position(level.m_player_start);
+                        player_pos.x = player_start.x;
+                        player_pos.y = player_start.y;
+                        auto cp = ecs.get_component<Coinpurse>(player).coins;                        
+                        gamelog.printlog(std::string("You have ascended from the depths!").c_str());
+                        gamelog.printlog(std::string("You ended with " + std::to_string(cp) + " coins inside the coin purse.").c_str());
+                        gamelog.printlog(std::string("Congratulations!").c_str());
                         break;
                     }
                 }
