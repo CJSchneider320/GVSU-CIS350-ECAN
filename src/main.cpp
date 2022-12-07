@@ -399,7 +399,7 @@ std::string level_6;
     gamelog.init();
 
     bool quit = false;
-    level.m_current_level = 6;
+    level.m_current_level = 0;
 
     RunState runstate = RunState::PreRun;
 
