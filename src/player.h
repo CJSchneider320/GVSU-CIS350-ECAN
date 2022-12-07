@@ -113,8 +113,31 @@ public:
                             }
                         }
                     }
+                    auto& chests = ecs.get_component_map<Chest>()->component_map;
+                    for (auto& chest : chests) {
+                        auto& chest_position = ecs.get_component<Position>(chest.first);
+                        if (level.position_to_index(chest_position.x, chest_position.y)
+                            == level.position_to_index(player_pos.x, player_pos.y)) {
+                            auto& chest_component = ecs.get_component<Chest>(chest.first);
+                            if (!chest_component.opened) {
+                                auto& coinpurse = ecs.get_component<Coinpurse>(player);
+                                coinpurse.coins += chest_component.gold;
+                                chest_component.opened = true;
+                                gamelog.printlog(std::string("You find " + std::to_string(chest_component.gold) + " coins in the chest.").c_str());
+                                gamelog.printlog("You put them in your coinpurse.");
+                            } else {
+                                gamelog.printlog("The chest is empty.");
+                            }
+                        }
+                    }
                 }
                 return RunState::PlayerTurn;
+            }
+            case 'g':
+            {
+                auto& coinpurse = ecs.get_component<Coinpurse>(player);
+                gamelog.printlog(std::string("You have " + std::to_string(coinpurse.coins) + " gold coins.").c_str());
+                return RunState::PlayerInput;
             }
             case 'q':
                 return RunState::Exit;

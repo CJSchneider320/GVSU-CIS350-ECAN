@@ -4,12 +4,15 @@
 #include <string>
 #include <vector>
 #include <ncurses.h>
-#include <cstdlib>
+//#include <cstdlib>
 
 #include "colordata.h"
 #include "components.h"
 #include "chars.h"
 #include "world.h"
+#include "game_log.h"
+
+extern GameLog gamelog;
 
 enum TileType {
     Floor,
@@ -88,6 +91,7 @@ public:
     }
 
     void create_preset_level(std::string a_level, std::unordered_map<int, std::vector<int>> connections, Entity player, World& ecs) {
+        std::srand((unsigned) time(NULL));
         int index = 0;
         for (char tile : a_level) {
             switch (tile) {
@@ -205,13 +209,14 @@ public:
                 }
                 case 'c':
                 {
+                    int gold = 1 + std::rand() % 100;
                     m_tiles.push_back(TileType::ChestTile);
                     m_blocked_tiles.push_back(false);
                     Entity chest = ecs.create_entity();
                     ecs.add_component(chest, index_to_position(index));
                     ecs.add_component(chest,
                             Renderable {CHEST, FYELLOWBBLACK, 1});
-                    ecs.add_component(chest, Chest {false,} );
+                    ecs.add_component(chest, Chest {false, gold} );
                     m_tile_contents.push_back(std::set<Entity>{chest});
                     break;
                 }

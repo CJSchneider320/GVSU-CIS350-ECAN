@@ -358,6 +358,7 @@ int main() {
     ecs.add_component(player, Renderable { "@", FGREENBBLACK, 10});
     ecs.add_component(player, CPlayer {});
     ecs.add_component(player, Ambulates {});
+    ecs.add_component(player, Coinpurse { 0 });
 
     level.create_preset_level(baseline_level, connections_baseline, player, ecs);
     ecs.add_component(player, level.index_to_position(level.m_player_start));
