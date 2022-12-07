@@ -15,6 +15,12 @@
 #define BOTTOM_MIDDLE_WALL	"\u2569"
 #define CROSS_WALL			"\u256C"
 
+// End Walls
+#define LEFT_END_WALL       "\u255E"
+#define RIGHT_END_WALL      "\u2561"
+#define TOP_END_WALL        "\u2565"
+#define BOTTOM_END_WALL     "\u2568"
+
 // Stairs
 #define STAIRS_ENTER	"\u25BC"
 #define STAIRS_EXIT		"\u25B2"

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <ncurses.h>
-//#include <cstdlib>
 
 #include "colordata.h"
 #include "components.h"
@@ -45,7 +44,7 @@ public:
     int m_height = 15;
     int m_width = 20;
 
-    void draw_level(WINDOW* room, World& ecs) {
+    void draw_level(WINDOW* room, std::string a_level, World& ecs) {
         int x = 0;
         int y = 0;
         std::string glyph;
@@ -62,7 +61,7 @@ public:
                     color = FWHITEBBLACK;
                     break;
                 case TileType::Wall:
-                    glyph = "#";
+                    glyph = wall_glyph(a_level, index);
                     color = FWHITEBBLACK;
                     emphasis = A_BOLD;
                     break;
@@ -267,6 +266,68 @@ public:
     int position_to_index(int x, int y) {
         return (y * (m_width)) + x;
     }
+
+    std::string wall_glyph(std::string level, int index) {
+        uint8_t mask = 0;
+        Position this_pos = index_to_position(index);
+        // check the cardinal directions for walls or doors.
+        if (level.at(position_to_index(this_pos.x - 1, this_pos.y)) == '#'
+            || level.at(position_to_index(this_pos.x - 1, this_pos.y)) == 'D'
+            || level.at(position_to_index(this_pos.x - 1, this_pos.y)) == 'd') {
+            mask += 1;
+        }
+        if (level.at(position_to_index(this_pos.x + 1, this_pos.y)) == '#'
+            || level.at(position_to_index(this_pos.x + 1, this_pos.y)) == 'D'
+            || level.at(position_to_index(this_pos.x + 1, this_pos.y)) == 'd') {
+            mask += 2;
+        }
+        if (level.at(position_to_index(this_pos.x, this_pos.y - 1)) == '#'
+            || level.at(position_to_index(this_pos.x, this_pos.y - 1)) == 'D'
+            || level.at(position_to_index(this_pos.x, this_pos.y - 1)) == 'd') {
+            mask += 4;
+        }
+        if (level.at(position_to_index(this_pos.x, this_pos.y + 1)) == '#'
+            || level.at(position_to_index(this_pos.x, this_pos.y) + 1) == 'D'
+            || level.at(position_to_index(this_pos.x, this_pos.y) + 1) == 'd') {
+            mask += 8;
+        }
+        
+        switch (mask) {
+            case 1:
+                return RIGHT_END_WALL;
+            case 2:
+                return LEFT_END_WALL;
+            case 3:
+                return HORIZONTAL_WALL;
+            case 4:
+                return BOTTOM_END_WALL;
+            case 5:
+                return BOTTOM_RIGHT_WALL;
+            case 6:
+                return BOTTOM_LEFT_WALL;
+            case 7:
+                return BOTTOM_MIDDLE_WALL;
+            case 8:
+                return TOP_END_WALL;
+            case 9:
+                return TOP_RIGHT_WALL;
+            case 10:
+                return TOP_LEFT_WALL;
+            case 11:
+                return TOP_MIDDLE_WALL;
+            case 12:
+                return VERTICAL_WALL;
+            case 13:
+                return RIGHT_MIDDLE_WALL;
+            case 14:
+                return LEFT_MIDDLE_WALL;
+            case 15:
+                return CROSS_WALL;
+            default:
+                return "#";
+        }
+    }
+
 };
 
 #endif
