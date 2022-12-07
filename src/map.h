@@ -38,6 +38,7 @@ public:
     std::vector<bool> m_blocked_tiles;
     std::vector<Entity> m_doors;
     std::vector<std::set<Entity>> m_tile_contents;
+    char floor_tiles[5] = {'.', ',', '`', '\"', '\''};
     int m_current_level = -1;
     int m_previous_level = -1;
     int m_player_start = 0;
@@ -57,7 +58,7 @@ public:
             wmove(room, y, x);
             switch (tile) {
                 case TileType::Floor:
-                    glyph = ".";
+                    glyph = floor_tiles[rand() % 6];
                     color = FWHITEBBLACK;
                     break;
                 case TileType::Wall:
