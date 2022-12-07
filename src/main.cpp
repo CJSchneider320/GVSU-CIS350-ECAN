@@ -98,7 +98,7 @@ int main() {
         return -1;
     }
     
-    //noecho();
+    noecho();
     curs_set(0); // hide the cursor
     keypad(stdscr, true);
     start_color();
@@ -400,7 +400,6 @@ std::string level_6;
 
     bool quit = false;
     level.m_current_level = 0;
-    std::string current_level_layout = level_0;
 
     RunState runstate = RunState::PreRun;
 
@@ -411,17 +410,18 @@ std::string level_6;
     ecs.add_component(player, Ambulates {});
     ecs.add_component(player, Coinpurse { 0 });
 
-    level.create_preset_level(baseline_level, connections_baseline, player, ecs);
+    level.create_preset_level(level_0, connections_level_0, player, ecs);
     ecs.add_component(player, level.index_to_position(level.m_player_start));
 
+    Position player_pos = ecs.get_component<Position>(player);
+    level.m_tile_contents[level.position_to_index(player_pos.x, player_pos.y)].insert(player);
     while (!quit) {
-        level.draw_level(room, current_level_layout, ecs);
+        level.draw_level(room, ecs);
         std::string player_glyph = ecs.get_component<Renderable>(player).glyph;
         int player_color = ecs.get_component<Renderable>(player).symbol_color;
         int player_emphasis = A_BOLD;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
-        level.m_tile_contents[level.position_to_index(player_x, player_y)].insert(player);
 
         for (int render_order = 0; render_order <= MAX_RENDER_ORDER; render_order++) {
             for (auto& renderable : ecs.get_component_map<Renderable>()->component_map) {
@@ -472,13 +472,13 @@ std::string level_6;
                     tile_content.clear();
                 }
                 level.m_tile_contents.clear();
+                level.m_tile_glyphs.clear();
                 clear_entities(player, ecs);
 
                 // Determine which level it is.
                 switch (level.m_current_level) {
                     case 0:
                     {
-                        current_level_layout = level_0;
                         level.create_preset_level(level_0, connections_level_0, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
@@ -492,18 +492,17 @@ std::string level_6;
                     }
                     case 1:
                     {
-                        current_level_layout = level_1;
                         level.create_preset_level(level_1, connections_level_1, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
                         gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
+                        level.draw_level(room, ecs);
                         break;
                     }
                     case 2:
                     {
-                        current_level_layout = level_2;
                         level.create_preset_level(level_2, connections_level_2, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
@@ -514,8 +513,7 @@ std::string level_6;
                     }
                     case 3:
                     {
-                        current_level_layout = level_3;
-                        level.create_preset_level(current_level_layout, connections_level_3, player, ecs);
+                        level.create_preset_level(level_3, connections_level_3, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
@@ -526,8 +524,7 @@ std::string level_6;
                     }
                     case 4:
                     {
-                        current_level_layout = level_4;
-                        level.create_preset_level(current_level_layout, connections_level_4, player, ecs);
+                        level.create_preset_level(level_4, connections_level_4, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
@@ -537,8 +534,7 @@ std::string level_6;
                     }
                     case 5:
                     {
-                        current_level_layout = level_5;
-                        level.create_preset_level(current_level_layout, connections_level_5, player, ecs);
+                        level.create_preset_level(level_5, connections_level_5, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
@@ -549,8 +545,7 @@ std::string level_6;
                     }
                     case 6:
                     {
-                        current_level_layout = level_6;
-                        level.create_preset_level(current_level_layout, connections_level_6, player, ecs);
+                        level.create_preset_level(level_6, connections_level_6, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;

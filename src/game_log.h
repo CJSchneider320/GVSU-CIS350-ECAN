@@ -20,7 +20,7 @@ public:
         box(gamelog, ACS_VLINE, ACS_HLINE);
         wmove(gamelog, 0, 4);
         wprintw(gamelog, "Journal");
-        printlog("Welcome to ECNA!");
+        printlog("Welcome to ECAN!");
     }
 
     void printlog(const char* phrase) {

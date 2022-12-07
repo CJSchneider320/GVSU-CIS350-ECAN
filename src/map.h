@@ -14,16 +14,16 @@
 extern GameLog gamelog;
 
 enum TileType {
-    Floor,
-    Wall,
-    SpikeTile,
-    DoorTile,
-    LeverTile,
-    StairsEnter,
-    StairsExit,
-    ChestTile,
-    PressurePlateTile,
-    Unknown,
+    Floor = 0,
+    Wall = 1,
+    SpikeTile = 2,
+    DoorTile = 3,
+    LeverTile = 4,
+    StairsEnter = 5,
+    StairsExit = 6,
+    ChestTile = 7,
+    PressurePlateTile = 8,
+    Unknown = 9,
 };
 
 enum DoorStatus {
@@ -38,14 +38,15 @@ public:
     std::vector<bool> m_blocked_tiles;
     std::vector<Entity> m_doors;
     std::vector<std::set<Entity>> m_tile_contents;
-    char floor_tiles[5] = {'.', ',', '`', '\"', '\''};
+    std::vector<std::string> m_tile_glyphs;
+    std::vector<char> floor_tiles = {'.', ',', '`', '\"', '\''};
     int m_current_level = -1;
     int m_previous_level = -1;
     int m_player_start = 0;
     int m_height = 15;
     int m_width = 20;
 
-    void draw_level(WINDOW* room, std::string a_level, World& ecs) {
+    void draw_level(WINDOW* room, World& ecs) {
         int x = 0;
         int y = 0;
         std::string glyph;
@@ -58,21 +59,27 @@ public:
             wmove(room, y, x);
             switch (tile) {
                 case TileType::Floor:
-                    glyph = floor_tiles[rand() % 6];
+                {
+                    glyph = m_tile_glyphs[index];
                     color = FWHITEBBLACK;
                     break;
+                }
                 case TileType::Wall:
-                    glyph = wall_glyph(a_level, index);
+                {
+                    glyph = m_tile_glyphs[index];
                     color = FWHITEBBLACK;
                     emphasis = A_BOLD;
                     break;
+                }
                 case TileType::SpikeTile:
-                    glyph = SPIKE;
-                    color = FWHITEBBLACK;
-                    break;
                 case TileType::DoorTile:
                 case TileType::LeverTile:
+                case TileType::StairsEnter:
+                case TileType::StairsExit:
+                case TileType::ChestTile:
+                case TileType::PressurePlateTile:
                     break;
+                case Unknown:
                 default:
                     glyph = "?";
                     color = FMAGENTABBLACK;
@@ -87,6 +94,7 @@ public:
                 x = 0;
                 y += 1;
             }
+
             ++index;
         }
     }
@@ -97,26 +105,32 @@ public:
         for (char tile : a_level) {
             switch (tile) {
                 case '#':
+                {
                     m_tiles.push_back(TileType::Wall);
                     m_blocked_tiles.push_back(true);
                     m_tile_contents.push_back(std::set<Entity>{});
+                    m_tile_glyphs.push_back(wall_glyph(a_level, index));
                     break;
+                }
                 case '.':
+                {
                     m_tiles.push_back(TileType::Floor);
                     m_blocked_tiles.push_back(false);
                     m_tile_contents.push_back(std::set<Entity>{});
+                    std::string glyph = "";
+                    glyph += floor_tiles[rand() % 5];
+                    m_tile_glyphs.push_back(glyph);
                     break;
+                }
                 case '@':
                 {
                     m_tiles.push_back(TileType::Floor);
                     m_blocked_tiles.push_back(false);
-                    if (m_previous_level < m_current_level) {
-                        m_player_start = a_level.find('@');
-                    } else {
-                        auto& player_pos = ecs.get_component<Position>(player);
-                        m_player_start = position_to_index(player_pos.x, player_pos.y);
-                    }
+                    m_player_start = a_level.find('@');
                     m_tile_contents.push_back(std::set<Entity>{player});
+                    std::string glyph;
+                    glyph = floor_tiles[rand() % 5];
+                    m_tile_glyphs.push_back(glyph);
                     break;
                 }
                 case '!':
@@ -129,6 +143,7 @@ public:
                     ecs.add_component(spike,
                             Renderable { SPIKE, FREDBBLACK });
                     m_tile_contents.push_back(std::set<Entity>{spike});
+                    m_tile_glyphs.push_back(SPIKE);
                     break;
                 }
                 case 'D':
@@ -141,6 +156,7 @@ public:
                     ecs.add_component(door, Renderable {std::string(DOOR), FYELLOWBBLACK, 0});
                     m_doors.push_back(door);
                     m_tile_contents.push_back(std::set<Entity>{door});
+                    m_tile_glyphs.push_back(DOOR);
                     break;
                 }
                 case 'd':
@@ -153,6 +169,7 @@ public:
                     ecs.add_component(door, Renderable {std::string(LEFT_OPEN_DOOR), FYELLOWBBLACK, 0});
                     m_doors.push_back(door);
                     m_tile_contents.push_back(std::set<Entity>{door});
+                    m_tile_glyphs.push_back(LEFT_OPEN_DOOR);
                     break;
                 }
                 case 'l':
@@ -168,6 +185,7 @@ public:
                     ecs.add_component(lever, Lever { false });
                     ecs.add_component(lever, Interactable {});
                     m_tile_contents.push_back(std::set<Entity>{lever});
+                    m_tile_glyphs.push_back(LEVER_OFF);
                     break;
                 }
                 case 'L':
@@ -182,6 +200,7 @@ public:
                     ecs.add_component(lever, Lever { true });
                     ecs.add_component(lever, Interactable {});
                     m_tile_contents.push_back(std::set<Entity>{lever});
+                    m_tile_glyphs.push_back(LEVER_ON);
                     break;
                 }
                 case 'S':
@@ -194,6 +213,7 @@ public:
                             Renderable {STAIRS_EXIT, FCYANBBLACK, 0});
                     ecs.add_component(stairs_exit, index_to_position(index));
                     m_tile_contents.push_back(std::set<Entity>{stairs_exit});
+                    m_tile_glyphs.push_back(STAIRS_EXIT);
                     break;
                 }
                 case 's':
@@ -206,6 +226,7 @@ public:
                             Renderable {STAIRS_ENTER, FCYANBBLACK, 0});
                     ecs.add_component(stairs_enter, index_to_position(index));
                     m_tile_contents.push_back(std::set<Entity>{stairs_enter});
+                    m_tile_glyphs.push_back(STAIRS_ENTER);
                     break;
                 }
                 case 'c':
@@ -219,11 +240,12 @@ public:
                             Renderable {CHEST, FYELLOWBBLACK, 1});
                     ecs.add_component(chest, Chest {false, gold} );
                     m_tile_contents.push_back(std::set<Entity>{chest});
+                    m_tile_glyphs.push_back(CHEST);
                     break;
                 }
                 case 'p':
                 {
-                    m_tiles.push_back(TileType::ChestTile);
+                    m_tiles.push_back(TileType::PressurePlateTile);
                     m_blocked_tiles.push_back(false);
                     Entity plate = ecs.create_entity();
                     ecs.add_component(plate, index_to_position(index));
@@ -232,6 +254,7 @@ public:
                     ecs.add_component(plate, Connection { connections[index] });
                     ecs.add_component(plate, PressurePlate { false });
                     m_tile_contents.push_back(std::set<Entity>{plate});
+                    m_tile_glyphs.push_back(PRESSURE_PLATE);
                     break;
                 }
                 case 'R':
@@ -245,6 +268,9 @@ public:
                             Renderable { ROBOT, FBLUEBBLACK, 2 });
                     ecs.add_component(robot, Ambulates {});
                     m_tile_contents.push_back(std::set<Entity>{robot});
+                    std::string glyph;
+                    glyph = floor_tiles[rand() % 5];
+                    m_tile_glyphs.push_back(glyph);
                     break;
                 }
                 default:

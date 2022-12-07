@@ -1,6 +1,8 @@
 #ifndef INTERACTION_SYSTEM_H_
 #define INTERACTION_SYSTEM_H_
 #include <iostream>
+#include <ncurses.h>
+
 #include "world.h"
 #include "system.h"
 #include "components.h"

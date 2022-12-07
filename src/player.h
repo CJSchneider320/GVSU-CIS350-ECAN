@@ -83,7 +83,6 @@ public:
                 return RunState::PlayerTurn;
             case ' ':
             {
-                //std::cout << "Player interacting" << std::endl;
                 auto& player_pos = ecs.get_component<Position>(player);
                 auto tile_contents = level.m_tile_contents[level.position_to_index(player_pos.x, player_pos.y)];
                 auto& interactables = ecs.get_component_map<Interactable>()->component_map;
@@ -103,12 +102,6 @@ public:
                                 level.m_previous_level = level.m_current_level;
                                 level.m_current_level += 1;
                                 gamelog.printlog("You ascend the staircase.");
-                                return RunState::PreRun;
-                            } else if (!stair.second.is_exit
-                                && level.position_to_index(player_pos.x, player_pos.y) == level.position_to_index(position.x, position.y)) {
-                                level.m_previous_level = level.m_current_level;
-                                level.m_current_level -= 1;
-                                gamelog.printlog("You descend the staircase.");
                                 return RunState::PreRun;
                             }
                         }
