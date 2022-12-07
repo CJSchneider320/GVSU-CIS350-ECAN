@@ -186,10 +186,10 @@ int main() {
     level_1 += "#...d..l..D........#"; // 7
     level_1 += "#...#.....#.......l#"; // 8
     level_1 += "#...#.....#!!!!!!!!#"; // 9
-    level_1 += "#...#.....#........#"; // 10
+    level_1 += "#...#.....#c.......#"; // 10
     level_1 += "#...#.....#........#"; // 11
     level_1 += "#...###D###........#"; // 12
-    level_1 += "#.@.#.....#........#"; // 13
+    level_1 += "#.@.#.....d........#"; // 13
     level_1 += "#...#.....#........#"; // 14
     level_1 += "####################"; // 15
 
@@ -199,6 +199,7 @@ int main() {
             level.position_to_index(R, 4)});
     connections_level_1[level.position_to_index(H, 6)] = std::vector<int>({
             level.position_to_index(E, 6),
+			level.position_to_index(K, 12),
             level.position_to_index(K, 6)});
     connections_level_1[level.position_to_index(S, 7)] = std::vector<int>({
             level.position_to_index(H, 11)});
@@ -206,23 +207,27 @@ int main() {
     std::string level_2;
     level_2 +=  "####################"; // 1
     level_2 +=  "#...#.#....#@..#...#"; // 2
-    level_2 +=  "#.S.#.#.##.#.#.#.#.#"; // 3
-    level_2 +=  "#...D.#.##.###...#.#"; // 4
+    level_2 +=  "#.S.#.#..#.#.#.#.#.#"; // 3
+    level_2 +=  "#...D.##.#.###...#.#"; // 4
     level_2 +=  "#####.#..#...#.#.#.#"; // 5
-    level_2 +=  "#.....##.###.#.#.#.#"; // 6
-    level_2 +=  "#.####...#...#.#...#"; // 7
-    level_2 +=  "#.#....###.###.#####"; // 8
-    level_2 +=  "#.#.###........#####"; // 9
-    level_2 +=  "#.....#.######.....#"; // 10
-    level_2 +=  "#...#.#.#...#......#"; // 11
-    level_2 +=  "###.#.#.#......#####"; // 12
-    level_2 +=  "#c###.#.########...#"; // 13
-    level_2 +=  "#.....#..........#l#"; // 14
+    level_2 +=  "#.....#.####.#.#.#.#"; // 6
+    level_2 +=  "#.#####.#....#.#...#"; // 7
+    level_2 +=  "#.#.....##.###.#####"; // 8
+    level_2 +=  "#.#.#####......#####"; // 9
+    level_2 +=  "#......##.####.....#"; // 10
+    level_2 +=  "#.####D#..#l#......#"; // 11
+    level_2 +=  "###....#.##....#####"; // 12
+    level_2 +=  "#c####D#.#######...#"; // 13
+    level_2 +=  "#......#.........#l#"; // 14
     level_2 +=  "####################"; // 15
 
     std::unordered_map<int, std::vector<int>> connections_level_2;
 	connections_level_2[level.position_to_index(S, 13)] = std::vector<int>({
-            level.position_to_index(E, 3)});
+            level.position_to_index(E, 3),
+			level.position_to_index(G, 12)});
+	connections_level_2[level.position_to_index(L, 10)] = std::vector<int>({
+            level.position_to_index(G, 10)});		
+			
 			
     std::string level_3;
        	      //ABCDEFGHIJKLMNOPQRST

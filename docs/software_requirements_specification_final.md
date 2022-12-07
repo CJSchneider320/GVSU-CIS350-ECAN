@@ -17,13 +17,13 @@ This document is designed to outline the goals of which we are going to meet by 
    1. Player statistics shall be recorded on player-character death.
    2. The player object shall be moveable based on user input.
    3. Our game shall detect collisions between the player and other non-passable objects.
-   4. The player shall lose health upon contact with damaging obstacles or entities.
+   4. The player shall die upon touching a spike object.
    5. The player shall have money, which is earned from opening chests and entering new levels. 
    6. The player shall be able to move between levels by using stairs
 3. Puzzle Requirements
 	1. There shall be Objects that the player can interact with.
 	2. Switch objects, like levers or buttons, shall alter the state of other objects.
-	3. Robots shall copy the player's movement when not blocked by a wall
+	3. Robots shall copy the player's movement when not blocked by a wall.
 	4. Pressure plates shall be triggered by players or robots stepping on them.
 	5. Heavy pressure plates shall only be triggered by robots stepping on them.
 	6. Doors shall be closed or open to player and entity movement, and shall be closed and opened by switches.
@@ -42,7 +42,7 @@ This document is designed to outline the goals of which we are going to meet by 
 	1. The player character shall be represented by a unique, unmistakable symbol.
 	2. The player shall always be visible on the screen.
 	3. The main screen will be updated upon entering a new room, but the player will "remember" how the prior rooms were left.
-	4. The player has a visible health bar that shows the health remaining.
+	4. The game shall inform the user when the player has died.
 	5. The player shall be controlled with WASD, and interact with objects with the Spacebar.
 3. Graphics/UI Requirements
 	1. Our game shall update at a rate of 30 frames per second.
