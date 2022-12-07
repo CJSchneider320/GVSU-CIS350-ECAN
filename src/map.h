@@ -13,7 +13,7 @@
 enum TileType {
     Floor,
     Wall,
-    Spike,
+    SpikeTile,
     DoorTile,
     LeverTile,
     StairsEnter,
@@ -34,7 +34,7 @@ public:
     std::vector<TileType> m_tiles;
     std::vector<bool> m_blocked_tiles;
     std::vector<Entity> m_doors;
-    std::vector<std::vector<Entity>> m_tile_contents;
+    std::vector<std::set<Entity>> m_tile_contents;
     int m_current_level = 0;
     int m_previous_level = 0;
     int m_player_start = 0;
@@ -62,7 +62,7 @@ public:
                     color = FWHITEBBLACK;
                     emphasis = A_BOLD;
                     break;
-                case TileType::Spike:
+                case TileType::SpikeTile:
                     glyph = SPIKE;
                     color = FWHITEBBLACK;
                     break;
@@ -93,14 +93,15 @@ public:
                 case '#':
                     m_tiles.push_back(TileType::Wall);
                     m_blocked_tiles.push_back(true);
-                    m_tile_contents.push_back(std::vector<Entity>());
+                    m_tile_contents.push_back(std::set<Entity>{});
                     break;
                 case '.':
                     m_tiles.push_back(TileType::Floor);
                     m_blocked_tiles.push_back(false);
-                    m_tile_contents.push_back(std::vector<Entity>());
+                    m_tile_contents.push_back(std::set<Entity>{});
                     break;
                 case '@':
+                {
                     m_tiles.push_back(TileType::Floor);
                     m_blocked_tiles.push_back(false);
                     if (m_previous_level < m_current_level) {
@@ -109,13 +110,21 @@ public:
                         auto& player_pos = ecs.get_component<Position>(player);
                         m_player_start = position_to_index(player_pos.x, player_pos.y);
                     }
-                    m_tile_contents.push_back(std::vector<Entity>());
+                    m_tile_contents.push_back(std::set<Entity>{player});
                     break;
+                }
                 case '!':
-                    m_tiles.push_back(TileType::Spike);
+                {
+                    m_tiles.push_back(TileType::SpikeTile);
                     m_blocked_tiles.push_back(false);
-                    m_tile_contents.push_back(std::vector<Entity>());
+                    Entity spike = ecs.create_entity();
+                    ecs.add_component(spike, Spike { false });
+                    ecs.add_component(spike, index_to_position(index));
+                    ecs.add_component(spike,
+                            Renderable { SPIKE, FREDBBLACK });
+                    m_tile_contents.push_back(std::set<Entity>{spike});
                     break;
+                }
                 case 'D':
                 {
                     m_tiles.push_back(TileType::DoorTile);
@@ -125,7 +134,7 @@ public:
                     ecs.add_component(door, index_to_position(index));
                     ecs.add_component(door, Renderable {std::string(DOOR), FYELLOWBBLACK, 0});
                     m_doors.push_back(door);
-                    m_tile_contents.push_back(std::vector<Entity>({door}));
+                    m_tile_contents.push_back(std::set<Entity>{door});
                     break;
                 }
                 case 'd':
@@ -137,7 +146,7 @@ public:
                     ecs.add_component(door, index_to_position(index));
                     ecs.add_component(door, Renderable {std::string(LEFT_OPEN_DOOR), FYELLOWBBLACK, 0});
                     m_doors.push_back(door);
-                    m_tile_contents.push_back(std::vector<Entity>(door));
+                    m_tile_contents.push_back(std::set<Entity>{door});
                     break;
                 }
                 case 'l':
@@ -152,7 +161,7 @@ public:
                     ecs.add_component(lever, Connection { connections[index] });
                     ecs.add_component(lever, Lever { false });
                     ecs.add_component(lever, Interactable {});
-                    m_tile_contents.push_back(std::vector<Entity>(lever));
+                    m_tile_contents.push_back(std::set<Entity>{lever});
                     break;
                 }
                 case 'L':
@@ -166,7 +175,7 @@ public:
                     ecs.add_component(lever, Connection { connections[index] });
                     ecs.add_component(lever, Lever { true });
                     ecs.add_component(lever, Interactable {});
-                    m_tile_contents.push_back(std::vector<Entity>(lever));
+                    m_tile_contents.push_back(std::set<Entity>{lever});
                     break;
                 }
                 case 'S':
@@ -178,7 +187,7 @@ public:
                     ecs.add_component(stairs_exit,
                             Renderable {STAIRS_EXIT, FCYANBBLACK, 0});
                     ecs.add_component(stairs_exit, index_to_position(index));
-                    m_tile_contents.push_back(std::vector<Entity>(stairs_exit));
+                    m_tile_contents.push_back(std::set<Entity>{stairs_exit});
                     break;
                 }
                 case 's':
@@ -190,7 +199,7 @@ public:
                     ecs.add_component(stairs_enter,
                             Renderable {STAIRS_ENTER, FCYANBBLACK, 0});
                     ecs.add_component(stairs_enter, index_to_position(index));
-                    m_tile_contents.push_back(std::vector<Entity>(stairs_enter));
+                    m_tile_contents.push_back(std::set<Entity>{stairs_enter});
                     break;
                 }
                 case 'c':
@@ -202,7 +211,7 @@ public:
                     ecs.add_component(chest,
                             Renderable {CHEST, FYELLOWBBLACK, 1});
                     ecs.add_component(chest, Chest {});
-                    m_tile_contents.push_back(std::vector<Entity>(chest));
+                    m_tile_contents.push_back(std::set<Entity>{chest});
                     break;
                 }
                 case 'p':
@@ -215,7 +224,7 @@ public:
                             Renderable { PRESSURE_PLATE, FMAGENTABBLACK, 0 });
                     ecs.add_component(plate, Connection { connections[index] });
                     ecs.add_component(plate, PressurePlate { false });
-                    m_tile_contents.push_back(std::vector<Entity>(plate));
+                    m_tile_contents.push_back(std::set<Entity>{plate});
                     break;
                 }
                 case 'R':
@@ -227,13 +236,14 @@ public:
                     ecs.add_component(robot, index_to_position(index));
                     ecs.add_component(robot,
                             Renderable { ROBOT, FBLUEBBLACK, 2 });
-                    m_tile_contents.push_back(std::vector<Entity>(robot));
+                    ecs.add_component(robot, Ambulates {});
+                    m_tile_contents.push_back(std::set<Entity>{robot});
                     break;
                 }
                 default:
                     m_tiles.push_back(TileType::Unknown);
                     m_blocked_tiles.push_back(true);
-                    m_tile_contents.push_back(std::vector<Entity>());
+                    m_tile_contents.push_back(std::set<Entity>{});
                     break;
             }
             ++index;

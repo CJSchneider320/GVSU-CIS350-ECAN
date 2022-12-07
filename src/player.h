@@ -12,9 +12,19 @@ extern GameLog gamelog;
 
 class Player {
 public:
+    static RunState kill_player () {
+        gamelog.printlog("You have died. ");
+        gamelog.printlog("You hear a voice:");
+        gamelog.printlog("\"You still have much to explore.\", you hear.");
+        gamelog.printlog("You feel a rush of astral wind as you're taken to the beginning of the floor.");
+        gamelog.printlog("The voice whispers once more, \"Avoid your folley that led to your demise.\".");
+        return RunState::PreRun;
+    }
     static void try_move_player(int delta_y, int delta_x, Entity player, Map& level, World& ecs) {
         auto& player_pos = ecs.get_component<Position>(player);
 
+        int destination = level.position_to_index(player_pos.x + delta_x, player_pos.y + delta_y);
+        ecs.add_component(player, AttemptedMove {destination});
         // Check if player is attempting to move outside the window
         if (player_pos.x + delta_x > level.m_width
                 || player_pos.x + delta_x < 0
@@ -25,14 +35,25 @@ public:
         }
 
         // Create a destination and check if it's blocked
-        int destination = level.position_to_index(player_pos.x + delta_x, player_pos.y + delta_y);
         if (!level.m_blocked_tiles[destination]) {
             // Update the player position
             auto new_player_pos = level.index_to_position(destination);
-            level.m_tile_contents[level.position_to_index(player_pos.x, player_pos.y)].pop_back();
+            level.m_tile_contents[level.position_to_index(player_pos.x, player_pos.y)].erase(player);
             player_pos.x = new_player_pos.x;
             player_pos.y = new_player_pos.y;
-            level.m_tile_contents[level.position_to_index(player_pos.x, player_pos.y)].push_back(player);
+            level.m_tile_contents[level.position_to_index(player_pos.x, player_pos.y)].insert(player);
+            auto new_tile_contents = level.m_tile_contents[destination];
+            // Check for spikes
+            auto& spikes = ecs.get_component_map<Spike>()->component_map;
+            for (auto& spike : spikes) {
+                for (auto content : new_tile_contents) {
+                    if (spike.first == content) {
+                        gamelog.printlog("You step on a spike!");
+                        auto& c_spike = ecs.get_component<Spike>(spike.first);
+                        c_spike.is_stood_on = true;
+                    }
+                }
+            }
         }
     }
 

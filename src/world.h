@@ -103,6 +103,7 @@ public:
     }
     
     void run_systems(World& world) {
+        maintain();
         system_manager->run_systems(world, entity_manager);
         maintain();
     }

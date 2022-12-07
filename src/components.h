@@ -51,4 +51,16 @@ struct PressurePlate {
 
 struct Robot {};
 
+struct Ambulates {};
+
+struct AttemptedMove {
+    int destination;
+};
+
+struct Spike {
+    bool is_stood_on;
+};
+
+struct Dead {};
+
 #endif

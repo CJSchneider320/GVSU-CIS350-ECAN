@@ -11,6 +11,8 @@
 #include "interaction_system.h"
 #include "game_log.h"
 #include "robot_ai_system.h"
+#include "plate_interaction_system.h"
+#include "spike_death_system.h"
 
 // Make the Map global
 Map level;
@@ -104,6 +106,7 @@ int main() {
 
     // ---------------------------------------------------------------
     // Initialize colors.
+    init_pair(FREDBBLACK, COLOR_RED, COLOR_BLACK);
     init_pair(FGREENBBLACK, COLOR_GREEN, COLOR_BLACK);
     init_pair(FYELLOWBBLACK, COLOR_YELLOW, COLOR_BLACK);
     init_pair(FBLUEBBLACK, COLOR_BLUE, COLOR_BLACK);
@@ -285,14 +288,14 @@ int main() {
     level_5 += "#..!!..!.##....!...#"; // 11
     level_5 += "#......c.##.!!.....#"; // 12
     level_5 += "#..!!!!.!##..!..!..#"; // 13
-    level_5 += "#l.......dD.....Sp#"; // 14
+    level_5 += "#l.......dD......Sp#"; // 14
     level_5 += "####################"; // 15
 
     std::unordered_map<int, std::vector<int>> connections_level_5;
 	connections_level_5[level.position_to_index(B, 13)] = std::vector<int>({
-            level.position_to_index(J, 13)});
-	connections_level_5[level.position_to_index(S, 13)] = std::vector<int>({
             level.position_to_index(K, 13)});
+	connections_level_5[level.position_to_index(S, 13)] = std::vector<int>({
+            level.position_to_index(J, 13)});
 
     // ---------------------------------------------------------------
 
@@ -316,15 +319,28 @@ int main() {
     ecs.register_component<Chest>();
     ecs.register_component<PressurePlate>();
     ecs.register_component<Robot>();
+    ecs.register_component<Ambulates>();
+    ecs.register_component<AttemptedMove>();
+    ecs.register_component<Spike>();
+    ecs.register_component<Dead>();
 
     // Register Systems
     auto interaction = ecs.register_system<Interaction>();
     interaction->components.insert(ecs.get_component_type<Position>());
     interaction->components.insert(ecs.get_component_type<WantsToInteract>());
     ecs.set_system_signature<Interaction>();
+
     auto robot_ai = ecs.register_system<RobotAiSystem>();
     robot_ai->components.insert(ecs.get_component_type<Robot>());
     ecs.set_system_signature<RobotAiSystem>();
+
+    auto plate_system = ecs.register_system<PlateInteractionSystem>();
+    plate_system->components.insert(ecs.get_component_type<PressurePlate>());
+    ecs.set_system_signature<PlateInteractionSystem>();
+
+    auto spike_system = ecs.register_system<SpikeDeathSystem>();
+    spike_system->components.insert(ecs.get_component_type<Spike>());
+    ecs.set_system_signature<SpikeDeathSystem>();
 
     // ---------------------------------------------------------------
 
@@ -332,7 +348,7 @@ int main() {
     gamelog.init();
 
     bool quit = false;
-    level.m_current_level = 3;
+    level.m_current_level = 5;
 
     RunState runstate = RunState::PreRun;
 
@@ -340,6 +356,7 @@ int main() {
     Entity player = ecs.create_entity();
     ecs.add_component(player, Renderable { "@", FGREENBBLACK, 10});
     ecs.add_component(player, CPlayer {});
+    ecs.add_component(player, Ambulates {});
 
     level.create_preset_level(baseline_level, connections_baseline, player, ecs);
     ecs.add_component(player, level.index_to_position(level.m_player_start));
@@ -351,7 +368,7 @@ int main() {
         int player_emphasis = A_BOLD;
         int player_x = ecs.get_component<Position>(player).x;
         int player_y = ecs.get_component<Position>(player).y;
-        level.m_tile_contents[level.position_to_index(player_x, player_y)].push_back(player);
+        level.m_tile_contents[level.position_to_index(player_x, player_y)].insert(player);
 
         for (int render_order = 0; render_order <= MAX_RENDER_ORDER; render_order++) {
             for (auto& renderable : ecs.get_component_map<Renderable>()->component_map) {
@@ -380,7 +397,19 @@ int main() {
         wrefresh(room);
         wrefresh(gamelog.gamelog);
 
+        // Check if something died.
+        auto deaths = ecs.get_component_map<Dead>()->component_map;
+        if (!deaths.empty()) {
+            for (auto death : deaths) {
+                if (player == death.first) {
+                    ecs.remove_component<Dead>(player);
+                    runstate = Player::kill_player();
+                }
+            }
+        }
+
         switch(runstate) {
+            // A new level must be created.
             case RunState::PreRun:
             {
                 level.m_tiles.clear();
@@ -392,6 +421,7 @@ int main() {
                 level.m_tile_contents.clear();
                 clear_entities(player, ecs);
 
+                // Determine which level it is.
                 switch (level.m_current_level) {
                     case 1:
                     {
@@ -421,11 +451,12 @@ int main() {
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
                         gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
+                        gamelog.printlog("You feel a mystical link to your very soul.");
                         break;
                     }
                     case 4:
                     {
-                        level.create_preset_level(level_3, connections_level_4, player, ecs);
+                        level.create_preset_level(level_4, connections_level_4, player, ecs);
                         Position& player_pos = ecs.get_component<Position>(player);
                         Position player_start = level.index_to_position(level.m_player_start);
                         player_pos.x = player_start.x;
@@ -441,6 +472,7 @@ int main() {
                         player_pos.x = player_start.x;
                         player_pos.y = player_start.y;
                         gamelog.printlog(std::string("You enter level " + std::to_string(level.m_current_level) + ".").c_str());
+                        gamelog.printlog("You feel a mystical link to your very soul.");
                         break;
                     }
                 }
