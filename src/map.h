@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <ncurses.h>
+#include <cstdlib>
 
 #include "colordata.h"
 #include "components.h"
@@ -210,7 +211,7 @@ public:
                     ecs.add_component(chest, index_to_position(index));
                     ecs.add_component(chest,
                             Renderable {CHEST, FYELLOWBBLACK, 1});
-                    ecs.add_component(chest, Chest {});
+                    ecs.add_component(chest, Chest {false,} );
                     m_tile_contents.push_back(std::set<Entity>{chest});
                     break;
                 }

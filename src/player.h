@@ -20,6 +20,7 @@ public:
         gamelog.printlog("The voice whispers once more, \"Avoid your folley that led to your demise.\".");
         return RunState::PreRun;
     }
+
     static void try_move_player(int delta_y, int delta_x, Entity player, Map& level, World& ecs) {
         auto& player_pos = ecs.get_component<Position>(player);
 

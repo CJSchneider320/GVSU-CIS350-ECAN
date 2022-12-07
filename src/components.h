@@ -43,7 +43,10 @@ struct Stairs {
     bool is_exit;
 };
 
-struct Chest {};
+struct Chest {
+    bool opened;
+    int gold;
+};
 
 struct PressurePlate {
     bool is_stood_on;
@@ -62,5 +65,9 @@ struct Spike {
 };
 
 struct Dead {};
+
+struct Coinpurse {
+    int coins;
+};
 
 #endif

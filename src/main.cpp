@@ -323,6 +323,7 @@ int main() {
     ecs.register_component<AttemptedMove>();
     ecs.register_component<Spike>();
     ecs.register_component<Dead>();
+    ecs.register_component<Coinpurse>();
 
     // Register Systems
     auto interaction = ecs.register_system<Interaction>();
