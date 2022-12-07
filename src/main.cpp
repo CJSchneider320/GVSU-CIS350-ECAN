@@ -244,35 +244,48 @@ int main() {
 
 
     std::string level_4;
+    	      //ABCDEFGHIJKLMNOPQRST
     level_4 += "####################"; // 1
     level_4 += "#.s.#.l....D.c#..l!#"; // 2
     level_4 += "#.@.#......####...!#"; // 3
     level_4 += "#...#####..#.!!!..!#"; // 4
-    level_4 += "#.p........D.!!!..!#"; // 5
-    level_4 += "##d#########.!!!..!#"; // 6
+    level_4 += "#..........D.!!!..!#"; // 5
+    level_4 += "##D#########.!!!..!#"; // 6
     level_4 += "#...#......#.......#"; // 7
     level_4 += "#.l.##############D#"; // 8
-    level_4 += "#####......D.......#"; // 9
-    level_4 += "#..........##d#d#d##"; // 10
-    level_4 += "#..........##.#.#.##"; // 11
-    level_4 += "######..#####.!.!.##"; // 12
+    level_4 += "#####......D.l.l.l.#"; // 9
+    level_4 += "#..........##D#D#D##"; // 10
+    level_4 += "#l.........##l#l#l##"; // 11
+    level_4 += "######..#####D#D#D##"; // 12
     level_4 += "#..........##l#l#l##"; // 13
     level_4 += "#..S.......#########"; // 14
     level_4 += "####################"; // 15
-
+    	      //ABCDEFGHIJKLMNOPQRST
     std::unordered_map<int, std::vector<int>> connections_level_4;
-	connections_level_4[level.position_to_index(C, 4)] = std::vector<int>({
-            level.position_to_index(C, 5)});
 	connections_level_4[level.position_to_index(G, 1)] = std::vector<int>({
+            level.position_to_index(C, 5)});
+        connections_level_4[level.position_to_index(C, 7)] = std::vector<int>({
             level.position_to_index(L, 4)});
-	connections_level_4[level.position_to_index(R, 1)] = std::vector<int>({
+        connections_level_4[level.position_to_index(R, 1)] = std::vector<int>({
             level.position_to_index(S, 7)});
-	connections_level_4[level.position_to_index(N, 12)] = std::vector<int>({
+        connections_level_4[level.position_to_index(N, 10)] = std::vector<int>({
             level.position_to_index(N, 9)});
-	connections_level_4[level.position_to_index(P, 12)] = std::vector<int>({
+	connections_level_4[level.position_to_index(P, 10)] = std::vector<int>({
             level.position_to_index(P, 9)});
-	connections_level_4[level.position_to_index(R, 12)] = std::vector<int>({
-            level.position_to_index(L, 1)});	
+ 	connections_level_4[level.position_to_index(R, 10)] = std::vector<int>({
+            level.position_to_index(R, 11)});
+        connections_level_4[level.position_to_index(R, 12)] = std::vector<int>({
+            level.position_to_index(R, 11)});
+        connections_level_4[level.position_to_index(R, 12)] = std::vector<int>({
+            level.position_to_index(L, 8)});
+        connections_level_4[level.position_to_index(N, 8)] = std::vector<int>({
+            level.position_to_index(N, 9)});
+        connections_level_4[level.position_to_index(P, 8)] = std::vector<int>({
+            level.position_to_index(P, 9)});
+        connections_level_4[level.position_to_index(R, 8)] = std::vector<int>({
+            level.position_to_index(R, 9)});
+        connections_level_4[level.position_to_index(B, 10)] = std::vector<int>({
+            level.position_to_index(L, 1)});
 
 std::string level_5;
     level_5 += "####################"; // 1
@@ -349,7 +362,7 @@ std::string level_5;
     gamelog.init();
 
     bool quit = false;
-    level.m_current_level = 1;
+    level.m_current_level = 4;
 
     RunState runstate = RunState::PreRun;
 
