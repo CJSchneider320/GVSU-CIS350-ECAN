@@ -9,15 +9,14 @@ This document is designed to outline the goals of which we are going to meet by 
    2. The user shall be able to move the player through the levels.
    3. The player shall be able to move between levels.
    4. The layout of the levels shall be predefined.
-   5. Additional challenge levels can be unlocked with money after beating the regular levels.
-   6. The levels shall take place on a 2d grid of tiles, each object takes up 1 tile.
-   7. Objects that the game shall implement include: walls, doors, buttons, pressure plates, levers, spikes, stairs, and robots.
+   5. The levels shall take place on a 2d grid of tiles, each object takes up 1 tile.
+   6. Objects that the game shall implement include: walls, doors, buttons, pressure plates, levers, spikes, stairs, and robots.
    
 2. Player Requirements
-   1. Player statistics shall be recorded on player-character death.
+   1. The Player statistics shall be recorded upon completing the game.
    2. The player object shall be moveable based on user input.
    3. Our game shall detect collisions between the player and other non-passable objects.
-   4. The player shall lose health upon contact with damaging obstacles or entities.
+   4. The player shall die and return to the start of the level upon contact with damaging obstacles.
    5. The player shall have money, which is earned from opening chests and entering new levels. 
    6. The player shall be able to move between levels by using stairs
 3. Puzzle Requirements
@@ -41,13 +40,14 @@ This document is designed to outline the goals of which we are going to meet by 
 2. Player Requirements
 	1. The player character shall be represented by a unique, unmistakable symbol.
 	2. The player shall always be visible on the screen.
-	3. The main screen will be updated upon entering a new room, but the player will "remember" how the prior rooms were left.
-	4. The player has a visible health bar that shows the health remaining.
-	5. The player shall be controlled with WASD, and interact with objects with the Spacebar.
+	3. The player's position will be updated upon the player entering a new room.
+	4. The user shall be able to check the amount of money collected by the player
+	5. The player shall be controlled with WASD or the arrow keys, and interact with objects with the Spacebar.
 3. Graphics/UI Requirements
 	1. Our game shall update at a rate of 30 frames per second.
-	2. Our game shall have a easily traversed main menu and corresponding sub-menus to access game play, statistics, and other similar pages.
+	2. Our game shall inform the user of events such as opening doors, death of the player, or entering a new level, through text at the bottom of the screen.
 	3. Our game interface shall be able to show all the details without being confusing or overwhelming.
 	4. The game shall be rendered using the ncurses library in a terminal.
 	5. The user shall be able to differientate between the different objects/tiles/entities, with each having a unique symbol and/or color.
 	6.  The interface shall be consistent and visually appealing.
+	7. The UI shall update the screen smoothly when changing levels.
