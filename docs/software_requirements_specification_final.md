@@ -55,5 +55,12 @@ This document is designed to outline the goals of which we are going to meet by 
 	
 # Software Artifacts
 This is the list of all artifacts created for this project
+[Project Proposal](https://github.com/CJSchneider320/GVSU-CIS350-ECAN/blob/master/docs/proposal.md)
+
+[Tasks](https://github.com/CJSchneider320/GVSU-CIS350-ECAN/blob/master/docs/tasks.md)
+
+[Original SRS](https://github.com/CJSchneider320/GVSU-CIS350-ECAN/blob/master/docs/software_requirements_specification.md)
+
 [Midterm Presentation](https://github.com/CJSchneider320/GVSU-CIS350-ECAN/blob/master/docs/midterm_presentation_projectECAN.pdf)
+
 [Final Presentation](https://github.com/CJSchneider320/GVSU-CIS350-ECAN/blob/master/docs/final_presentation_projectECAN.pdf)
