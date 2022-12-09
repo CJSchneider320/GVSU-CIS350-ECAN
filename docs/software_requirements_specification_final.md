@@ -51,3 +51,7 @@ This document is designed to outline the goals of which we are going to meet by 
 	5. The user shall be able to differientate between the different objects/tiles/entities, with each having a unique symbol and/or color.
 	6.  The interface shall be consistent and visually appealing.
 	7. The UI shall update the screen smoothly when changing levels.
+	
+	
+# Software Artifacts
+This is the list of all artifacts created for this project
